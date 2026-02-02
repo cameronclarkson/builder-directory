@@ -15,6 +15,7 @@ import { Loader2, Search } from "lucide-react";
 export default function Buyers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMarket, setSelectedMarket] = useState<string>("all");
+  const [selectedBuyerType, setSelectedBuyerType] = useState<string>("all");
 
   // Fetch all buyers
   const { data: buyers, isLoading: buyersLoading } = trpc.buyers.list.useQuery();
@@ -22,30 +23,32 @@ export default function Buyers() {
   // Fetch filter options
   const { data: filters } = trpc.buyers.getFilters.useQuery();
 
-  // Search buyers when query or market changes
+  // Search buyers when query, market, or buyer type changes
   const { data: searchResults, isLoading: searchLoading } = trpc.buyers.search.useQuery(
     {
       query: searchQuery,
       market: selectedMarket,
+      buyerType: selectedBuyerType,
     },
     {
-      enabled: searchQuery.length > 0 || selectedMarket !== "all",
+      enabled: searchQuery.length > 0 || selectedMarket !== "all" || selectedBuyerType !== "all",
     }
   );
 
   // Determine which data to display
   const displayedBuyers = useMemo(() => {
-    if (searchQuery.length > 0 || selectedMarket !== "all") {
+    if (searchQuery.length > 0 || selectedMarket !== "all" || selectedBuyerType !== "all") {
       return searchResults || [];
     }
     return buyers || [];
-  }, [buyers, searchResults, searchQuery, selectedMarket]);
+  }, [buyers, searchResults, searchQuery, selectedMarket, selectedBuyerType]);
 
   const isLoading = buyersLoading || searchLoading;
 
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedMarket("all");
+    setSelectedBuyerType("all");
   };
 
   return (
@@ -53,9 +56,9 @@ export default function Buyers() {
       {/* Header */}
       <div className="bg-white border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Buyer Profiles</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Buyer Directory</h1>
           <p className="text-muted-foreground">
-            Discover land buyers and builders actively acquiring properties
+            Discover builders, developers, and investors actively acquiring properties
           </p>
         </div>
       </div>
@@ -63,7 +66,7 @@ export default function Buyers() {
       {/* Filters */}
       <div className="bg-white border-b border-border sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search Input */}
             <div className="relative">
               <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
@@ -74,6 +77,21 @@ export default function Buyers() {
                 className="pl-10"
               />
             </div>
+
+            {/* Buyer Type Filter */}
+            <Select value={selectedBuyerType} onValueChange={setSelectedBuyerType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by buyer type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                {filters?.buyerTypes?.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {/* Market Filter */}
             <Select value={selectedMarket} onValueChange={setSelectedMarket}>
@@ -94,7 +112,7 @@ export default function Buyers() {
             <Button
               variant="outline"
               onClick={handleClearFilters}
-              disabled={searchQuery === "" && selectedMarket === "all"}
+              disabled={searchQuery === "" && selectedMarket === "all" && selectedBuyerType === "all"}
             >
               Clear Filters
             </Button>

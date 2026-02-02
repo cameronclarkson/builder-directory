@@ -6,5 +6,6 @@ export interface BuyerProfile {
   market: string | null;
   buy_box: string | null;
   notes: string | null;
+  buyer_type: string | null;
   created_at: string;
 }

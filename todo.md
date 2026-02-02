@@ -42,3 +42,15 @@
 - [ ] Add deal-to-buyer matching logic
 - [x] Test buyer profile display and search
 - [x] Update checkpoint with buyer profiles feature
+
+## Phase 3 - Consolidate to Unified Buyers Directory
+- [x] Migrate contacts table data to buyer_profiles table
+- [x] Add buyer_type field (Builder, Developer, Investor) to buyer_profiles
+- [x] Update tRPC procedures to use unified buyers table
+- [x] Remove separate contacts router
+- [x] Update UI to single directory with buyer_type filter
+- [x] Remove separate Directory and Buyers pages
+- [x] Create unified Buyers page with type filtering
+- [x] Update Home page navigation
+- [x] Test unified directory search and filtering
+- [x] Create checkpoint with consolidated directory

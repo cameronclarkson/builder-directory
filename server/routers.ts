@@ -18,35 +18,6 @@ export const appRouter = router({
     }),
   }),
 
-  contacts: router({
-    list: publicProcedure.query(async () => {
-      const { getAllContacts } = await import("./supabase");
-      return getAllContacts();
-    }),
-    search: publicProcedure
-      .input(
-        z.object({
-          query: z.string().optional(),
-          status: z.string().optional(),
-          focus: z.string().optional(),
-        })
-      )
-      .query(async ({ input }) => {
-        const { searchContacts } = await import("./supabase");
-        return searchContacts(input.query || "", input.status, input.focus);
-      }),
-    getFilters: publicProcedure.query(async () => {
-      const { getUniqueStatuses, getUniqueFocuses } = await import(
-        "./supabase"
-      );
-      const [statuses, focuses] = await Promise.all([
-        getUniqueStatuses(),
-        getUniqueFocuses(),
-      ]);
-      return { statuses, focuses };
-    }),
-  }),
-
   buyers: router({
     list: publicProcedure.query(async () => {
       const { getAllBuyers } = await import("./supabase");
@@ -57,16 +28,20 @@ export const appRouter = router({
         z.object({
           query: z.string().optional(),
           market: z.string().optional(),
+          buyerType: z.string().optional(),
         })
       )
       .query(async ({ input }) => {
         const { searchBuyers } = await import("./supabase");
-        return searchBuyers(input.query || "", input.market);
+        return searchBuyers(input.query || "", input.market, input.buyerType);
       }),
     getFilters: publicProcedure.query(async () => {
-      const { getUniqueMarkets } = await import("./supabase");
-      const markets = await getUniqueMarkets();
-      return { markets };
+      const { getUniqueMarkets, getUniqueBuyerTypes } = await import("./supabase");
+      const [markets, buyerTypes] = await Promise.all([
+        getUniqueMarkets(),
+        getUniqueBuyerTypes(),
+      ]);
+      return { markets, buyerTypes };
     }),
   }),
 });

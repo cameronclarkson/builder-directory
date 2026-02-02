@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { appRouter } from "./routers";
 
 describe("buyers router", () => {
@@ -18,6 +18,7 @@ describe("buyers router", () => {
       expect(buyer).toHaveProperty("company");
       expect(buyer).toHaveProperty("email");
       expect(buyer).toHaveProperty("market");
+      expect(buyer).toHaveProperty("buyer_type");
     });
   });
 
@@ -70,15 +71,29 @@ describe("buyers router", () => {
       });
     });
 
-    it("should combine search query and market filter", async () => {
+    it("should filter buyers by buyer type", async () => {
+      const results = await caller.buyers.search({
+        query: "",
+        buyerType: "Builder",
+      });
+
+      expect(Array.isArray(results)).toBe(true);
+      results.forEach((buyer) => {
+        expect(buyer.buyer_type).toBe("Builder");
+      });
+    });
+
+    it("should combine search query, market, and buyer type filters", async () => {
       const results = await caller.buyers.search({
         query: "Growth",
         market: "Georgia",
+        buyerType: "Builder",
       });
 
       expect(Array.isArray(results)).toBe(true);
       results.forEach((buyer) => {
         expect(buyer.market).toBe("Georgia");
+        expect(buyer.buyer_type).toBe("Builder");
       });
     });
 
@@ -93,19 +108,25 @@ describe("buyers router", () => {
   });
 
   describe("buyers.getFilters", () => {
-    it("should return available market filters", async () => {
+    it("should return available market and buyer type filters", async () => {
       const filters = await caller.buyers.getFilters();
 
       expect(filters).toHaveProperty("markets");
+      expect(filters).toHaveProperty("buyerTypes");
       expect(Array.isArray(filters.markets)).toBe(true);
+      expect(Array.isArray(filters.buyerTypes)).toBe(true);
       expect(filters.markets.length).toBeGreaterThan(0);
+      expect(filters.buyerTypes.length).toBeGreaterThan(0);
     });
 
-    it("should return unique markets", async () => {
+    it("should return unique markets and buyer types", async () => {
       const filters = await caller.buyers.getFilters();
 
       const uniqueMarkets = new Set(filters.markets);
       expect(uniqueMarkets.size).toBe(filters.markets.length);
+
+      const uniqueBuyerTypes = new Set(filters.buyerTypes);
+      expect(uniqueBuyerTypes.size).toBe(filters.buyerTypes.length);
     });
   });
 });

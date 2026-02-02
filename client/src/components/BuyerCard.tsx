@@ -10,7 +10,14 @@ export default function BuyerCard({ buyer }: BuyerCardProps) {
     <div className="bg-white border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
       {/* Header */}
       <div className="mb-4">
-        <h3 className="text-lg font-bold text-foreground mb-1">{buyer.name}</h3>
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="text-lg font-bold text-foreground">{buyer.name}</h3>
+          {buyer.buyer_type && (
+            <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full font-medium">
+              {buyer.buyer_type}
+            </span>
+          )}
+        </div>
         <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
           <Building2 className="w-4 h-4" />
           {buyer.company || "Unknown Company"}
