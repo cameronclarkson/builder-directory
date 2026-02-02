@@ -32,3 +32,13 @@
 - [x] Test all filter combinations
 - [x] Verify Supabase connection and data loading
 - [x] Create checkpoint and prepare for delivery
+
+## Phase 2 - Buyer Profiles Integration
+- [x] Add tRPC procedure to fetch buyer profiles from Supabase
+- [x] Create Buyers tab/section in directory
+- [x] Build buyer profile card component
+- [x] Add buyer search and filtering (by company, market, focus)
+- [ ] Create side-by-side view of contacts and buyers
+- [ ] Add deal-to-buyer matching logic
+- [x] Test buyer profile display and search
+- [x] Update checkpoint with buyer profiles feature

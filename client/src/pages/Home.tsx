@@ -13,14 +13,21 @@ export default function Home() {
           <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-4">
             Builder Directory
           </h1>
-          <p className="text-xl text-gray-600 font-light mb-8 max-w-2xl mx-auto">
-            Search and manage your builder contacts with ease. Access detailed information about builders, investors, and land wholesalers.
+          <p className="text-xl text-gray-600 font-light mb-12 max-w-2xl mx-auto">
+            Search and manage your builder contacts and buyer profiles. Access detailed information about builders, investors, land wholesalers, and active land buyers.
           </p>
-          <Link href="/directory">
-            <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
-              Open Directory
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/directory">
+              <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
+                Builder Contacts
+              </Button>
+            </Link>
+            <Link href="/buyers">
+              <Button size="lg" variant="outline" className="border-gray-900 text-gray-900 hover:bg-gray-50">
+                Buyer Profiles
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

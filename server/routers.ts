@@ -46,6 +46,29 @@ export const appRouter = router({
       return { statuses, focuses };
     }),
   }),
+
+  buyers: router({
+    list: publicProcedure.query(async () => {
+      const { getAllBuyers } = await import("./supabase");
+      return getAllBuyers();
+    }),
+    search: publicProcedure
+      .input(
+        z.object({
+          query: z.string().optional(),
+          market: z.string().optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        const { searchBuyers } = await import("./supabase");
+        return searchBuyers(input.query || "", input.market);
+      }),
+    getFilters: publicProcedure.query(async () => {
+      const { getUniqueMarkets } = await import("./supabase");
+      const markets = await getUniqueMarkets();
+      return { markets };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -106,3 +106,74 @@ export async function getUniqueStatuses(): Promise<string[]> {
 
   return Array.from(new Set<string>(statuses || [])).sort();
 }
+
+export interface BuyerProfile {
+  id: string;
+  name: string;
+  email: string | null;
+  company: string | null;
+  market: string | null;
+  buy_box: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export async function getAllBuyers(): Promise<BuyerProfile[]> {
+  const { data, error } = await supabase
+    .from("buyer_profiles")
+    .select("*")
+    .order("company", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching buyers:", error);
+    throw new Error(`Failed to fetch buyers: ${error.message}`);
+  }
+
+  return data || [];
+}
+
+export async function searchBuyers(
+  query: string,
+  marketFilter?: string
+): Promise<BuyerProfile[]> {
+  let q = supabase.from("buyer_profiles").select("*");
+
+  // Search by name, company, email
+  if (query) {
+    q = q.or(
+      `name.ilike.%${query}%,company.ilike.%${query}%,email.ilike.%${query}%`
+    );
+  }
+
+  // Filter by market
+  if (marketFilter && marketFilter !== "all") {
+    q = q.eq("market", marketFilter);
+  }
+
+  const { data, error } = await q.order("company", { ascending: true });
+
+  if (error) {
+    console.error("Error searching buyers:", error);
+    throw new Error(`Failed to search buyers: ${error.message}`);
+  }
+
+  return data || [];
+}
+
+export async function getUniqueMarkets(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("buyer_profiles")
+    .select("market")
+    .not("market", "is", null);
+
+  if (error) {
+    console.error("Error fetching markets:", error);
+    return [];
+  }
+
+  const markets = data
+    ?.map((item: { market: string | null }) => item.market)
+    .filter((m: string | null | undefined): m is string => m !== null && m !== "");
+
+  return Array.from(new Set<string>(markets || [])).sort();
+}
