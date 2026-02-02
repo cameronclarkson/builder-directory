@@ -1,31 +1,28 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { getLoginUrl } from "@/const";
-import { Streamdown } from 'streamdown';
+import { Link } from "wouter";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // The userAuth hooks provides authentication state
-  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
-
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
+      {/* Header with geometric accents */}
+      <div className="relative overflow-hidden flex-1 flex items-center">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full -mr-48 -mt-48 opacity-40" />
+        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-pink-50 rounded-full -mb-36 opacity-30" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-4">
+            Builder Directory
+          </h1>
+          <p className="text-xl text-gray-600 font-light mb-8 max-w-2xl mx-auto">
+            Search and manage your builder contacts with ease. Access detailed information about builders, investors, and land wholesalers.
+          </p>
+          <Link href="/directory">
+            <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
+              Open Directory
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
