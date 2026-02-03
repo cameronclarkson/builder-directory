@@ -96,3 +96,27 @@
 - [x] Update Supabase with enriched buy_box for all major builders
 - [x] Verify deal-matching improvements with enriched data
 - [x] Test buyer recommendations on Georgia deals
+
+
+## Phase 8 - Research Unknown Contacts & Delete Non-Responsive
+- [x] Research Boone Nerren (Texas Developer)
+- [x] Research Jose Mota (Miami Developer)
+- [x] Research Shauna Newlun (Colorado Builder)
+- [x] Research Lou Weilacher (North Carolina Builder)
+- [x] Research Micah Utt (Carolinas/Savannah Builder)
+- [x] Research Tony Hounshell (Nationwide Investor)
+- [x] Research Melvin Rose Jr (Georgia Investor)
+- [x] Research Mike Michael (Builder)
+- [x] Research other Unknown contacts with available market data
+- [x] Delete all contacts who responded "no" to LinkedIn outreach
+- [x] Update deals foreign keys before deletion
+
+## Phase 9 - Email Outreach & Interactions Tracking
+- [x] Create interactions table in Supabase
+- [x] Add tRPC procedures for logging deal submissions
+- [x] Build "Send to Buyer" button on deal cards
+- [x] Create email template with deal details pre-populated
+- [ ] Add interactions history view for each buyer
+- [ ] Build conversion rate tracking dashboard
+- [x] Test email outreach functionality
+- [x] Create checkpoint with email + tracking features

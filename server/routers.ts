@@ -61,6 +61,51 @@ export const appRouter = router({
       return { markets, buyerTypes };
     }),
   }),
+
+  interactions: router({
+    logDealSubmission: publicProcedure
+      .input(
+        z.object({
+          dealId: z.string(),
+          contactId: z.string(),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { logInteraction } = await import("./interactions");
+        return logInteraction({
+          dealId: input.dealId,
+          contactId: input.contactId,
+          interactionType: "email_sent",
+          status: "pending",
+          notes: input.notes,
+        });
+      }),
+    updateStatus: publicProcedure
+      .input(
+        z.object({
+          interactionId: z.string(),
+          status: z.enum(["pending", "interested", "not_interested", "closed"]),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { updateInteractionStatus } = await import("./interactions");
+        return updateInteractionStatus(input.interactionId, input.status, input.notes);
+      }),
+    getByDeal: publicProcedure
+      .input(z.object({ dealId: z.string() }))
+      .query(async ({ input }) => {
+        const { getInteractionsByDeal } = await import("./interactions");
+        return getInteractionsByDeal(input.dealId);
+      }),
+    getByContact: publicProcedure
+      .input(z.object({ contactId: z.string() }))
+      .query(async ({ input }) => {
+        const { getInteractionsByContact } = await import("./interactions");
+        return getInteractionsByContact(input.contactId);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
