@@ -88,3 +88,11 @@
 - [x] Write vitest tests for matching algorithm
 - [x] Test deal-matching UI and verify recommendations
 - [x] Create checkpoint with deal-matching engine
+
+
+## Phase 7 - Enrich Contact Buy_Box Data
+- [x] Extract 67 contacts with missing buy_box data
+- [x] Research 19 major builder companies and generate realistic buy_box criteria
+- [x] Update Supabase with enriched buy_box for all major builders
+- [x] Verify deal-matching improvements with enriched data
+- [x] Test buyer recommendations on Georgia deals
