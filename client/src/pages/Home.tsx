@@ -16,11 +16,18 @@ export default function Home() {
           <p className="text-xl text-gray-600 font-light mb-12 max-w-2xl mx-auto">
             Search and manage your buyer profiles—builders, developers, and investors. Access detailed information about active land buyers and their acquisition criteria.
           </p>
-          <Link href="/directory">
-            <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
-              Open Directory
-            </Button>
-          </Link>
+          <div className="flex gap-4 justify-center">
+            <Link href="/directory">
+              <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white">
+                Buyer Directory
+              </Button>
+            </Link>
+            <Link href="/deals">
+              <Button size="lg" variant="outline" className="border-gray-900 text-gray-900 hover:bg-gray-100">
+                Deal Pipeline
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

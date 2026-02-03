@@ -1,0 +1,210 @@
+import { useState, useMemo } from "react";
+import { trpc } from "@/lib/trpc";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Search, MapPin, DollarSign, TrendingUp } from "lucide-react";
+
+export default function Deals() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch all deals with recommended buyers
+  const { data: dealsWithMatches, isLoading } = trpc.deals.listWithMatches.useQuery();
+
+  // Filter deals by search query
+  const displayedDeals = useMemo(() => {
+    if (!dealsWithMatches) return [];
+    
+    if (searchQuery.length === 0) return dealsWithMatches;
+    
+    const query = searchQuery.toLowerCase();
+    return dealsWithMatches.filter((item) => {
+      const deal = item.deal;
+      return (
+        deal.title?.toLowerCase().includes(query) ||
+        deal.location?.toLowerCase().includes(query) ||
+        deal.description?.toLowerCase().includes(query)
+      );
+    });
+  }, [dealsWithMatches, searchQuery]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-card">
+        <div className="container py-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">Deal Pipeline</h1>
+          <p className="text-muted-foreground">
+            Browse active deals with AI-powered buyer recommendations
+          </p>
+        </div>
+      </header>
+
+      {/* Search and Filters */}
+      <div className="container py-6">
+        <div className="flex gap-4 items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              type="text"
+              placeholder="Search deals by title, location, or description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          {searchQuery && (
+            <Button
+              variant="outline"
+              onClick={() => setSearchQuery("")}
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+
+        <div className="mt-4 text-sm text-muted-foreground">
+          Showing {displayedDeals.length} of {dealsWithMatches?.length || 0} deals
+        </div>
+      </div>
+
+      {/* Deals Grid */}
+      <div className="container pb-12">
+        {displayedDeals.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No deals found matching your search.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6">
+            {displayedDeals.map((item) => {
+              const { deal, recommendedBuyers } = item;
+              
+              return (
+                <Card key={deal.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-2xl mb-2">{deal.title}</CardTitle>
+                        <div className="flex flex-wrap gap-2 items-center text-sm text-muted-foreground">
+                          {deal.location && (
+                            <div className="flex items-center gap-1">
+                              <MapPin className="w-4 h-4" />
+                              <span>{deal.location}</span>
+                            </div>
+                          )}
+                          {deal.value && (
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="w-4 h-4" />
+                              <span>${parseInt(deal.value).toLocaleString()}</span>
+                            </div>
+                          )}
+                          {deal.stage && (
+                            <Badge variant="outline">{deal.stage}</Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    {deal.description && (
+                      <p className="text-sm text-foreground mb-4">{deal.description}</p>
+                    )}
+                    
+                    {/* Recommended Buyers */}
+                    {recommendedBuyers.length > 0 ? (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <div className="flex items-center gap-2 mb-3">
+                          <TrendingUp className="w-4 h-4 text-primary" />
+                          <h3 className="font-semibold text-sm">Top Recommended Buyers</h3>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          {recommendedBuyers.map((match, idx) => {
+                            const { contact, score, matchBreakdown } = match;
+                            
+                            return (
+                              <div
+                                key={contact.id}
+                                className="flex items-center justify-between p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors"
+                              >
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium text-sm">{contact.name}</span>
+                                    {contact.company && contact.company !== "Unknown" && (
+                                      <span className="text-xs text-muted-foreground">
+                                        @ {contact.company}
+                                      </span>
+                                    )}
+                                    {contact.buyer_type && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        {contact.buyer_type}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  
+                                  {contact.market && (
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      {contact.market}
+                                    </p>
+                                  )}
+                                  
+                                  {/* Match Breakdown */}
+                                  <div className="flex gap-2 mt-2 text-xs">
+                                    {matchBreakdown.geographic > 0 && (
+                                      <Badge variant="outline" className="text-xs">
+                                        Location: {matchBreakdown.geographic}
+                                      </Badge>
+                                    )}
+                                    {matchBreakdown.acreage > 0 && (
+                                      <Badge variant="outline" className="text-xs">
+                                        Acreage: {matchBreakdown.acreage}
+                                      </Badge>
+                                    )}
+                                    {matchBreakdown.lotCount > 0 && (
+                                      <Badge variant="outline" className="text-xs">
+                                        Lots: {matchBreakdown.lotCount}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="text-right">
+                                  <div className="text-lg font-bold text-primary">
+                                    {score}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    Match Score
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-4 pt-4 border-t border-border">
+                        <p className="text-sm text-muted-foreground">
+                          No buyer recommendations available for this deal.
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

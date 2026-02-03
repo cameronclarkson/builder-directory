@@ -74,3 +74,17 @@
 - [x] Delete buyer_profiles table
 - [x] Test directory with consolidated contacts table
 - [x] Create checkpoint with consolidated data
+
+## Phase 6 - Deal-Matching Engine
+- [x] Analyze deals table schema and sample data
+- [x] Extract key matching criteria from contact buy_box fields
+- [x] Design scoring algorithm (location, acreage, zoning, price range, buyer type)
+- [x] Build backend matching service to score deals against contacts
+- [x] Create tRPC procedure to get deals with recommended buyers
+- [x] Build Deals page UI to display all deals
+- [x] Add deal cards showing top 3-5 recommended buyers per deal
+- [x] Add deal detail view with full buyer recommendations and scores
+- [x] Add filtering by deal stage, type, location
+- [x] Write vitest tests for matching algorithm
+- [x] Test deal-matching UI and verify recommendations
+- [x] Create checkpoint with deal-matching engine

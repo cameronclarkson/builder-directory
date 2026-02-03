@@ -18,6 +18,23 @@ export const appRouter = router({
     }),
   }),
 
+  deals: router({
+    list: publicProcedure.query(async () => {
+      const { getAllDeals } = await import("./dealMatching");
+      return getAllDeals();
+    }),
+    listWithMatches: publicProcedure.query(async () => {
+      const { getAllDealsWithMatches } = await import("./dealMatching");
+      return getAllDealsWithMatches();
+    }),
+    getRecommendedBuyers: publicProcedure
+      .input(z.object({ dealId: z.string() }))
+      .query(async ({ input }) => {
+        const { getRecommendedBuyers } = await import("./dealMatching");
+        return getRecommendedBuyers(input.dealId);
+      }),
+  }),
+
   contacts: router({
     list: publicProcedure.query(async () => {
       const { getAllContacts } = await import("./supabase");
