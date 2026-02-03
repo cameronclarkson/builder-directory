@@ -18,10 +18,10 @@ export const appRouter = router({
     }),
   }),
 
-  buyers: router({
+  contacts: router({
     list: publicProcedure.query(async () => {
-      const { getAllBuyers } = await import("./supabase");
-      return getAllBuyers();
+      const { getAllContacts } = await import("./supabase");
+      return getAllContacts();
     }),
     search: publicProcedure
       .input(
@@ -32,8 +32,8 @@ export const appRouter = router({
         })
       )
       .query(async ({ input }) => {
-        const { searchBuyers } = await import("./supabase");
-        return searchBuyers(input.query || "", input.market, input.buyerType);
+        const { searchContacts } = await import("./supabase");
+        return searchContacts(input.query || "", input.market, input.buyerType);
       }),
     getFilters: publicProcedure.query(async () => {
       const { getUniqueMarkets, getUniqueBuyerTypes } = await import("./supabase");

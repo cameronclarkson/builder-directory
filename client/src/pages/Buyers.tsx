@@ -17,14 +17,14 @@ export default function Buyers() {
   const [selectedMarket, setSelectedMarket] = useState<string>("all");
   const [selectedBuyerType, setSelectedBuyerType] = useState<string>("all");
 
-  // Fetch all buyers
-  const { data: buyers, isLoading: buyersLoading } = trpc.buyers.list.useQuery();
+  // Fetch all contacts
+  const { data: buyers, isLoading: buyersLoading } = trpc.contacts.list.useQuery();
 
   // Fetch filter options
-  const { data: filters } = trpc.buyers.getFilters.useQuery();
+  const { data: filters } = trpc.contacts.getFilters.useQuery();
 
-  // Search buyers when query, market, or buyer type changes
-  const { data: searchResults, isLoading: searchLoading } = trpc.buyers.search.useQuery(
+  // Search contacts when query, market, or buyer type changes
+  const { data: searchResults, isLoading: searchLoading } = trpc.contacts.search.useQuery(
     {
       query: searchQuery,
       market: selectedMarket,

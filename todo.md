@@ -54,3 +54,23 @@
 - [x] Update Home page navigation
 - [x] Test unified directory search and filtering
 - [x] Create checkpoint with consolidated directory
+
+## Phase 4 - LinkedIn Contacts Import & Overlap Analysis
+- [x] Extract LinkedIn contact data from PDF into structured format
+- [x] Query existing Supabase buyers to identify potential duplicates
+- [x] Match LinkedIn contacts with existing buyers by name/company/email
+- [x] Import new LinkedIn contacts not in database
+- [x] Update existing buyer profiles with enriched buy box data from LinkedIn
+- [x] Generate overlap analysis report showing duplicates and new contacts
+- [x] Update directory UI to reflect new contacts
+
+## Phase 5 - Consolidate buyer_profiles into contacts
+- [x] Analyze schema differences between contacts and buyer_profiles tables
+- [x] Migrate all buyer_profiles data to contacts table
+- [x] Identify duplicate contacts by name/email/company
+- [x] Remove duplicate contacts keeping the most complete record
+- [x] Update backend queries to use contacts table
+- [x] Update tRPC routers to use contacts instead of buyer_profiles
+- [x] Delete buyer_profiles table
+- [x] Test directory with consolidated contacts table
+- [x] Create checkpoint with consolidated data

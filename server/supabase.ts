@@ -10,38 +10,47 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 
 
-export interface BuyerProfile {
+export interface Contact {
   id: string;
   name: string;
   email: string | null;
   company: string | null;
+  phone: string | null;
+  website: string | null;
+  business: string | null;
+  status: string | null;
+  focus: string | null;
+  target_markets: string[] | null;
   market: string | null;
   buy_box: string | null;
   notes: string | null;
   buyer_type: string | null;
+  next_action: string | null;
+  follow_up_date: string | null;
   created_at: string;
+  updated_at: string | null;
 }
 
-export async function getAllBuyers(): Promise<BuyerProfile[]> {
+export async function getAllContacts(): Promise<Contact[]> {
   const { data, error } = await supabase
-    .from("buyer_profiles")
+    .from("contacts")
     .select("*")
     .order("company", { ascending: true });
 
   if (error) {
-    console.error("Error fetching buyers:", error);
-    throw new Error(`Failed to fetch buyers: ${error.message}`);
+    console.error("Error fetching contacts:", error);
+    throw new Error(`Failed to fetch contacts: ${error.message}`);
   }
 
   return data || [];
 }
 
-export async function searchBuyers(
+export async function searchContacts(
   query: string,
   marketFilter?: string,
   buyerTypeFilter?: string
-): Promise<BuyerProfile[]> {
-  let q = supabase.from("buyer_profiles").select("*");
+): Promise<Contact[]> {
+  let q = supabase.from("contacts").select("*");
 
   // Search by name, company, email
   if (query) {
@@ -63,8 +72,8 @@ export async function searchBuyers(
   const { data, error } = await q.order("company", { ascending: true });
 
   if (error) {
-    console.error("Error searching buyers:", error);
-    throw new Error(`Failed to search buyers: ${error.message}`);
+    console.error("Error searching contacts:", error);
+    throw new Error(`Failed to search contacts: ${error.message}`);
   }
 
   return data || [];
@@ -72,7 +81,7 @@ export async function searchBuyers(
 
 export async function getUniqueMarkets(): Promise<string[]> {
   const { data, error } = await supabase
-    .from("buyer_profiles")
+    .from("contacts")
     .select("market")
     .not("market", "is", null);
 
@@ -90,7 +99,7 @@ export async function getUniqueMarkets(): Promise<string[]> {
 
 export async function getUniqueBuyerTypes(): Promise<string[]> {
   const { data, error } = await supabase
-    .from("buyer_profiles")
+    .from("contacts")
     .select("buyer_type")
     .not("buyer_type", "is", null);
 
