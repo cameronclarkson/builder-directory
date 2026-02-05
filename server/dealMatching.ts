@@ -33,7 +33,7 @@ export interface DealWithMatches {
 
 // Extract numeric value from text (e.g., "10 acres" → 10, "25-100 acres" → [25, 100])
 function extractAcreage(text: string | null): { min: number; max: number } | null {
-  if (!text) return null;
+  if (!text || typeof text !== 'string') return null;
   
   // Match range: "5-20 acres" or "25-100 acres"
   const rangeMatch = text.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*acres?/i);
@@ -67,7 +67,7 @@ function extractAcreage(text: string | null): { min: number; max: number } | nul
 
 // Extract lot/unit count from text
 function extractLotCount(text: string | null): { min: number; max: number } | null {
-  if (!text) return null;
+  if (!text || typeof text !== 'string') return null;
   
   const rangeMatch = text.match(/(\d+)\s*-\s*(\d+)\s*(?:lots?|units?|homes?)/i);
   if (rangeMatch) {
@@ -91,7 +91,7 @@ function extractLotCount(text: string | null): { min: number; max: number } | nu
 
 // Check if location matches market
 function calculateGeographicScore(dealLocation: string | null, contactMarket: string | null): number {
-  if (!dealLocation || !contactMarket || contactMarket === "Unknown" || contactMarket === "") {
+  if (!dealLocation || typeof dealLocation !== 'string' || !contactMarket || typeof contactMarket !== 'string' || contactMarket === "Unknown" || contactMarket === "") {
     return 0;
   }
   
@@ -204,9 +204,11 @@ function calculateZoningScore(
   dealDescription: string | null,
   contactBuyBox: string | null
 ): number {
-  if (!contactBuyBox) return 0;
+  if (!contactBuyBox || typeof contactBuyBox !== 'string') return 0;
   
-  const dealText = ((dealZoning || "") + " " + (dealDescription || "")).toLowerCase();
+  const dealZoningStr = (typeof dealZoning === 'string' ? dealZoning : "");
+  const dealDescStr = (typeof dealDescription === 'string' ? dealDescription : "");
+  const dealText = (dealZoningStr + " " + dealDescStr).toLowerCase();
   const buyBoxLower = contactBuyBox.toLowerCase();
   
   // Check for zoning keywords
@@ -246,9 +248,9 @@ function calculateBuyerTypeScore(
   buyerType: string | null,
   dealDescription: string | null
 ): number {
-  if (!buyerType) return 0;
+  if (!buyerType || typeof buyerType !== 'string') return 0;
   
-  const dealText = (dealDescription || "").toLowerCase();
+  const dealText = (typeof dealDescription === 'string' ? dealDescription : "").toLowerCase();
   
   if (buyerType === "Builder") {
     return 5; // Builders are primary buyers for residential land
