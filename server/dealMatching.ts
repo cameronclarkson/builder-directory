@@ -157,16 +157,25 @@ function calculateAcreageScore(
   const dealAvg = (dealAcreageData.min + dealAcreageData.max) / 2;
   
   if (dealAvg >= buyBoxAcreageData.min && dealAvg <= buyBoxAcreageData.max) {
-    return 25; // Perfect match
+    return 30; // Perfect match - increased weight
   }
   
-  // Check if within 20% of range
-  const tolerance = 0.2;
+  // Check if within 30% of range (more flexible)
+  const tolerance = 0.3;
   const lowerBound = buyBoxAcreageData.min * (1 - tolerance);
   const upperBound = buyBoxAcreageData.max * (1 + tolerance);
   
   if (dealAvg >= lowerBound && dealAvg <= upperBound) {
-    return 15; // Close match
+    return 20; // Close match
+  }
+  
+  // Check if within 50% of range (still viable)
+  const wideTolerance = 0.5;
+  const wideLowerBound = buyBoxAcreageData.min * (1 - wideTolerance);
+  const wideUpperBound = buyBoxAcreageData.max * (1 + wideTolerance);
+  
+  if (dealAvg >= wideLowerBound && dealAvg <= wideUpperBound) {
+    return 10; // Marginal match
   }
   
   return 0;
@@ -211,10 +220,26 @@ function calculateZoningScore(
   const dealText = (dealZoningStr + " " + dealDescStr).toLowerCase();
   const buyBoxLower = contactBuyBox.toLowerCase();
   
-  // Check for zoning keywords
+  // Zoning type matching
+  const zoningTypes = [
+    { deal: ["residential", "single-family", "r3", "r4"], buyBox: ["residential", "single-family", "r3", "r4"], score: 20 },
+    { deal: ["commercial", "retail", "office"], buyBox: ["commercial", "retail", "office"], score: 20 },
+    { deal: ["multi-family", "multifamily", "apartment"], buyBox: ["multi-family", "multifamily", "apartment"], score: 20 },
+    { deal: ["industrial", "warehouse", "manufacturing"], buyBox: ["industrial", "warehouse", "manufacturing"], score: 20 },
+  ];
+  
+  for (const type of zoningTypes) {
+    const dealHasType = type.deal.some(keyword => dealText.includes(keyword));
+    const buyBoxHasType = type.buyBox.some(keyword => buyBoxLower.includes(keyword));
+    if (dealHasType && buyBoxHasType) {
+      return type.score;
+    }
+  }
+  
+  // Check for zoning readiness keywords
   const zoningKeywords = [
     "entitled", "zoning", "zoned", "raw land", "perk tested", 
-    "development ready", "permits", "r4", "r3", "residential"
+    "development ready", "permits", "utilities"
   ];
   
   let dealHasZoning = false;
@@ -233,11 +258,11 @@ function calculateZoningScore(
   }
   
   if (buyBoxLower.includes("entitled") && dealText.includes("entitled")) {
-    return 10; // Perfect match
+    return 15; // Perfect match
   }
   
   if (dealHasZoning) {
-    return 5; // Partial match
+    return 8; // Partial match
   }
   
   return 0;
@@ -340,7 +365,7 @@ export async function getRecommendedBuyers(dealId: string): Promise<DealWithMatc
   // Score each contact
   const matches = contacts
     .map((contact) => scoreDealContactMatch(dealData, contact))
-    .filter((match) => match.score >= 30) // Minimum viable match
+    .filter((match) => match.score >= 25) // Minimum viable match - lowered threshold
     .sort((a, b) => b.score - a.score)
     .slice(0, 5); // Top 5
   
@@ -371,7 +396,7 @@ export async function getAllDealsWithMatches(): Promise<DealWithMatches[]> {
   return deals.map((deal) => {
     const matches = contacts
       .map((contact) => scoreDealContactMatch(deal, contact))
-      .filter((match) => match.score >= 30)
+      .filter((match) => match.score >= 25)
       .sort((a, b) => b.score - a.score)
       .slice(0, 5);
     
