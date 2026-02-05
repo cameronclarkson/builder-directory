@@ -157,10 +157,10 @@ export default function Deals() {
                             return (
                               <div
                                 key={contact.id}
-                                className="flex items-center justify-between p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors"
+                                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors gap-3"
                               >
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex flex-wrap items-center gap-2">
                                     <span className="font-medium text-sm">{contact.name}</span>
                                     {contact.company && contact.company !== "Unknown" && (
                                       <span className="text-xs text-muted-foreground">
@@ -181,7 +181,7 @@ export default function Deals() {
                                   )}
                                   
                                   {/* Match Breakdown */}
-                                  <div className="flex gap-2 mt-2 text-xs">
+                                  <div className="flex flex-wrap gap-2 mt-2 text-xs">
                                     {matchBreakdown.geographic > 0 && (
                                       <Badge variant="outline" className="text-xs">
                                         Location: {matchBreakdown.geographic}
@@ -200,8 +200,8 @@ export default function Deals() {
                                   </div>
                                 </div>
                                 
-                                <div className="flex items-center gap-3">
-                                  <div className="text-right">
+                                <div className="flex items-center gap-3 w-full sm:w-auto">
+                                  <div className="text-right flex-shrink-0">
                                     <div className="text-lg font-bold text-primary">
                                       {score}
                                     </div>
@@ -213,6 +213,7 @@ export default function Deals() {
                                   <Button
                                     size="sm"
                                     variant="default"
+                                    className="flex-1 sm:flex-none whitespace-nowrap"
                                     onClick={() => {
                                       const subject = encodeURIComponent(`${deal.title} - Investment Opportunity`);
                                       const body = encodeURIComponent(

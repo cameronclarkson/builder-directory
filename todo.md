@@ -183,3 +183,10 @@
 - [x] Fix hamburger menu positioning and visibility
 - [x] Adjust page content padding/margins for mobile
 - [x] Test and verify mobile layout looks correct
+
+
+## Phase 15 - BuyerCard Mobile Layout Fixes
+- [x] Fix BuyerCard grid layout to stack on mobile
+- [x] Make "Send to Buyer" button full-width or stack vertically on mobile
+- [x] Ensure all card content fits within viewport on mobile
+- [x] Test card layout on various mobile screen sizes
