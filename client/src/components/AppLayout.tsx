@@ -20,12 +20,21 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const isActive = (href: string) => location === href;
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex flex-col md:flex-row h-screen bg-background">
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar - Desktop */}
       <aside
         className={`
           hidden md:flex md:flex-col w-64 bg-white border-r border-border
-          fixed md:relative h-full z-30
+          h-screen flex-shrink-0
         `}
         aria-label="Main navigation"
       >
@@ -42,7 +51,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -68,50 +77,22 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </nav>
 
         {/* Footer */}
-        <div className="px-4 py-6 border-t border-border">
+        <div className="px-4 py-6 border-t border-border flex-shrink-0">
           <p className="text-xs text-muted-foreground">
             Clarkson Capital
           </p>
         </div>
       </aside>
 
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
       {/* Mobile Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-30 md:hidden
-          transform transition-transform duration-300
+          fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg z-30 md:hidden
+          transform transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}
         aria-label="Main navigation"
       >
-        {/* Close button */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <Link href="/">
-            <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">BD</span>
-              </div>
-              <span className="font-bold text-lg text-gray-900">Builder Dir</span>
-            </a>
-          </Link>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Close menu"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
         {/* Navigation Items */}
         <nav className="px-4 py-6 space-y-2">
           {navItems.map((item) => {
@@ -140,15 +121,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </nav>
       </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Main Content Container */}
+      <div className="flex flex-col flex-1 w-full md:w-auto overflow-hidden">
         {/* Top Navigation Bar */}
-        <header className="bg-white border-b border-border sticky top-0 z-20">
-          <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+        <header className="bg-white border-b border-border sticky top-0 z-20 flex-shrink-0">
+          <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 w-full">
             {/* Hamburger Menu - Mobile */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
               aria-label={sidebarOpen ? "Close menu" : "Open menu"}
               aria-expanded={sidebarOpen}
             >
@@ -156,19 +137,19 @@ export default function AppLayout({ children }: AppLayoutProps) {
             </button>
 
             {/* Page Title - Mobile */}
-            <div className="md:hidden flex-1 text-center">
-              <h1 className="text-lg font-bold text-gray-900">Builder Directory</h1>
+            <div className="md:hidden flex-1 text-center px-2">
+              <h1 className="text-base sm:text-lg font-bold text-gray-900 truncate">Builder Directory</h1>
             </div>
 
             {/* Spacer for desktop */}
             <div className="hidden md:block flex-1" />
 
             {/* Right side actions */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900 text-sm"
               >
                 Help
               </Button>
@@ -177,7 +158,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto w-full">
           {children}
         </main>
       </div>
