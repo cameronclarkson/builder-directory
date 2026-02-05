@@ -27,6 +27,12 @@ export const appRouter = router({
       const { getAllDealsWithMatches } = await import("./dealMatching");
       return getAllDealsWithMatches();
     }),
+    getById: publicProcedure
+      .input(z.object({ dealId: z.string() }))
+      .query(async ({ input }) => {
+        const { getDealById } = await import("./dealMatching");
+        return getDealById(input.dealId);
+      }),
     getRecommendedBuyers: publicProcedure
       .input(z.object({ dealId: z.string() }))
       .query(async ({ input }) => {

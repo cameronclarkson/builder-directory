@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, MapPin, DollarSign, TrendingUp } from "lucide-react";
+import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Deals() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [, setLocation] = useLocation();
 
   // Fetch all deals with recommended buyers
   const { data: dealsWithMatches, isLoading } = trpc.deals.listWithMatches.useQuery();
@@ -89,7 +91,7 @@ export default function Deals() {
               const { deal, recommendedBuyers } = item;
               
               return (
-                <Card key={deal.id} className="hover:shadow-lg transition-shadow">
+                <Card key={deal.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation(`/deals/${deal.id}`)}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

@@ -407,6 +407,54 @@ export async function getRecommendedBuyers(dealId: string): Promise<DealWithMatc
   };
 }
 
+// Get a single deal by ID with recommended buyers and source contact
+export async function getDealById(dealId: string): Promise<{
+  deal: Deal;
+  recommendedBuyers: MatchedContact[];
+  sourceContact: Contact | null;
+} | null> {
+  // Fetch the deal with source contact
+  const { data: dealData, error: dealError } = await supabase
+    .from("deals")
+    .select(`
+      *,
+      source_contact:contacts!deals_contact_id_fkey(*)
+    `)
+    .eq("id", dealId)
+    .single();
+  
+  if (dealError || !dealData) {
+    console.error("Error fetching deal:", dealError);
+    return null;
+  }
+  
+  // Fetch all contacts with buy_box for matching
+  const { data: contactsData, error: contactsError } = await supabase
+    .from("contacts")
+    .select("*")
+    .not("buy_box", "is", null);
+  
+  if (contactsError) {
+    console.error("Error fetching contacts:", contactsError);
+    return null;
+  }
+  
+  const contacts = contactsData || [];
+  
+  // Score each contact
+  const matches = contacts
+    .map((contact) => scoreDealContactMatch(dealData, contact))
+    .filter((match) => match.score >= 25)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+  
+  return {
+    deal: dealData,
+    recommendedBuyers: matches,
+    sourceContact: (dealData as any).source_contact || null,
+  };
+}
+
 // Get all deals with recommended buyers
 export async function getAllDealsWithMatches(): Promise<DealWithMatches[]> {
   const deals = await getAllDeals();

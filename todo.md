@@ -147,3 +147,16 @@
 - [x] Add deal_type field logic to scoreDealContactMatch
 - [x] Test that builders only see real estate deals
 - [x] Create checkpoint with deal type filtering
+
+
+## Phase 12 - Deal Detail View & Source Attribution
+- [x] Check deals table schema for contact_id field
+- [x] Query deals to identify those missing contact source
+- [x] Assign contacts to deals based on location/type
+- [x] Build deal detail page component
+- [x] Add route for /deals/:id
+- [x] Display full deal information with buyer recommendations
+- [x] Show source contact information
+- [ ] Add edit functionality for deal details
+- [x] Test deal detail view
+- [x] Create checkpoint with deal detail view
