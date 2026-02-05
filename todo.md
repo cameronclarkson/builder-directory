@@ -198,3 +198,24 @@
 - [x] Remove match score reference from email template
 - [x] Keep only essential property details (title, location, acreage, zoning, value)
 - [x] Test email generation to verify no internal details are exposed
+
+
+## Phase 17 - Fix South Crest Deal Source Contact
+- [ ] Update South Crest/Stockbridge deal source contact from Chris to Susan
+- [ ] Verify Susan is marked as wholesaler/seller, not land acquisition
+
+## Phase 18 - Kanban Board View
+- [x] Create Kanban board layout with columns for each deal stage (Lead, Qualified, Under Contract, Closed, Dead)
+- [x] Implement desktop Kanban view with draggable cards
+- [x] Implement mobile swipeable Kanban interface
+- [x] Add stage indicators and deal counts per column
+- [ ] Enable drag-and-drop to move deals between stages on desktop
+- [ ] Enable swipe gestures to move deals between stages on mobile
+
+## Phase 19 - AI Buyer Research Feature
+- [x] Add "Find Buyers" button on deals with no buyer matches
+- [x] Implement deep research mode (detailed buyer profiles, acquisition criteria)
+- [x] Implement wide research mode (broad search across multiple sources)
+- [x] Display research results in modal or side panel
+- [ ] Allow user to add discovered buyers to database
+- [ ] Track research history per deal

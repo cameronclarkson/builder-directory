@@ -39,6 +39,18 @@ export const appRouter = router({
         const { getRecommendedBuyers } = await import("./dealMatching");
         return getRecommendedBuyers(input.dealId);
       }),
+    researchBuyers: publicProcedure
+      .input(z.object({ dealId: z.number(), mode: z.enum(["deep", "wide"]) }))
+      .mutation(async ({ input }) => {
+        // TODO: Implement AI buyer research
+        // For now, return mock response
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        return {
+          success: true,
+          buyersFound: input.mode === "deep" ? 5 : 15,
+          mode: input.mode,
+        };
+      }),
   }),
 
   contacts: router({

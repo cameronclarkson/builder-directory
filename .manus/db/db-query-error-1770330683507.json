@@ -1,0 +1,8 @@
+{
+  "query": "SELECT d.id, d.title, d.location, c.name as source_contact_name, c.buyer_type, c.company \nFROM G3wVMhCnLnsiHcMxwuHTbH.deals d \nLEFT JOIN G3wVMhCnLnsiHcMxwuHTbH.contacts c ON d.source_contact_id = c.id \nWHERE d.title LIKE '%South Crest%' OR d.title LIKE '%Stockbridge%' OR d.location LIKE '%Stockbridge%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gmAw13zHeUAAbH.b83994b4f844 --database G3wVMhCnLnsiHcMxwuHTbH --execute SELECT d.id, d.title, d.location, c.name as source_contact_name, c.buyer_type, c.company \nFROM G3wVMhCnLnsiHcMxwuHTbH.deals d \nLEFT JOIN G3wVMhCnLnsiHcMxwuHTbH.contacts c ON d.source_contact_id = c.id \nWHERE d.title LIKE '%South Crest%' OR d.title LIKE '%Stockbridge%' OR d.location LIKE '%Stockbridge%';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table 'g3wvmhcnlnsihcmxwuhtbh.deals' doesn't exist"
+  ]
+}

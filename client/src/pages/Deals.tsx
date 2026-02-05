@@ -4,12 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye } from "lucide-react";
+import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye, LayoutGrid, List } from "lucide-react";
 import { useLocation } from "wouter";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import KanbanBoard from "@/components/KanbanBoard";
+import MobileKanban from "@/components/MobileKanban";
+import BuyerResearchDialog from "@/components/BuyerResearchDialog";
 
 export default function Deals() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
+  const [researchDialogOpen, setResearchDialogOpen] = useState(false);
+  const [selectedDealForResearch, setSelectedDealForResearch] = useState<{ id: number; title: string } | null>(null);
   const [, setLocation] = useLocation();
 
   // Fetch all deals with recommended buyers
@@ -92,6 +98,26 @@ export default function Deals() {
               Clear
             </Button>
           )}
+          
+          {/* View Toggle - Desktop Only */}
+          <div className="hidden md:flex gap-2">
+            <Button
+              variant={viewMode === "kanban" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("kanban")}
+            >
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              Kanban
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+            >
+              <List className="h-4 w-4 mr-2" />
+              List
+            </Button>
+          </div>
         </div>
 
         <div className="mt-4 text-sm text-muted-foreground">
@@ -99,12 +125,68 @@ export default function Deals() {
         </div>
       </div>
 
-      {/* Deals Grid */}
+      {/* Deals View */}
       <div className="container pb-12">
         {displayedDeals.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No deals found matching your search.</p>
           </div>
+        ) : viewMode === "kanban" ? (
+          <>
+            {/* Desktop Kanban */}
+            <div className="hidden md:block">
+              <KanbanBoard
+                deals={displayedDeals.map((item) => ({
+                  id: parseInt(item.deal.id),
+                  title: item.deal.title,
+                  location: item.deal.location || undefined,
+                  value: item.deal.value || undefined,
+                  stage: (item.deal.stage || "Lead") as any,
+                  deal_type: item.deal.deal_type || undefined,
+                  acreage: item.deal.acreage || undefined,
+                  recommendedBuyersCount: item.recommendedBuyers.length,
+                }))}
+                onStageChange={(dealId, newStage) => {
+                  console.log(`Move deal ${dealId} to ${newStage}`);
+                  // TODO: Implement stage update mutation
+                }}
+                onFindBuyers={(dealId) => {
+                  const deal = displayedDeals.find((d) => parseInt(d.deal.id) === dealId);
+                  if (deal) {
+                    setSelectedDealForResearch({ id: dealId, title: deal.deal.title });
+                    setResearchDialogOpen(true);
+                  }
+                }}
+              />
+            </div>
+            
+            {/* Mobile Kanban */}
+            <div className="md:hidden h-[calc(100vh-300px)]">
+              <MobileKanban
+                deals={displayedDeals.map((item) => ({
+                  id: parseInt(item.deal.id),
+                  title: item.deal.title,
+                  location: item.deal.location || undefined,
+                  value: item.deal.value || undefined,
+                  stage: (item.deal.stage || "Lead") as any,
+                  deal_type: item.deal.deal_type || undefined,
+                  acreage: item.deal.acreage || undefined,
+                  recommendedBuyersCount: item.recommendedBuyers.length,
+                }))}
+                onStageChange={(dealId, newStage) => {
+                  console.log(`Move deal ${dealId} to ${newStage}`);
+                  // TODO: Implement stage update mutation
+                }}
+                onFindBuyers={(dealId) => {
+                  const deal = displayedDeals.find((d) => parseInt(d.deal.id) === dealId);
+                  if (deal) {
+                    setSelectedDealForResearch({ id: dealId, title: deal.deal.title });
+                    setResearchDialogOpen(true);
+                  }
+                }}
+              />
+            </div>
+          </>
         ) : (
           <div className="grid gap-6">
             {displayedDeals.map((item) => {
@@ -258,6 +340,16 @@ export default function Deals() {
           </div>
         )}
       </div>
+
+      {/* Buyer Research Dialog */}
+      {selectedDealForResearch && (
+        <BuyerResearchDialog
+          open={researchDialogOpen}
+          onOpenChange={setResearchDialogOpen}
+          dealId={selectedDealForResearch.id}
+          dealTitle={selectedDealForResearch.title}
+        />
+      )}
     </div>
   );
 }
