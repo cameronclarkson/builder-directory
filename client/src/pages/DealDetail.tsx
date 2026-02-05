@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Mail, MapPin, DollarSign, Home, Building2, Users } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import BackButton from "@/components/BackButton";
 
 export default function DealDetail() {
   const params = useParams();
@@ -22,6 +24,12 @@ export default function DealDetail() {
     return (
       <div className="min-h-screen bg-background p-8">
         <div className="container max-w-6xl">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Deal Pipeline", href: "/deals" },
+            ]}
+          />
           <p className="text-muted-foreground">Loading deal details...</p>
         </div>
       </div>
@@ -32,11 +40,14 @@ export default function DealDetail() {
     return (
       <div className="min-h-screen bg-background p-8">
         <div className="container max-w-6xl">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Deal Pipeline", href: "/deals" },
+            ]}
+          />
           <p className="text-muted-foreground">Deal not found</p>
-          <Button onClick={() => setLocation("/deals")} className="mt-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Deals
-          </Button>
+          <BackButton label="← Back to Deals" href="/deals" />
         </div>
       </div>
     );
@@ -77,16 +88,18 @@ Clarkson Capital`;
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="container max-w-6xl">
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Deal Pipeline", href: "/deals" },
+            { label: deal.title || "Deal Details", href: `/deals/${dealId}` },
+          ]}
+        />
+
         {/* Header */}
         <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => setLocation("/deals")}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Deal Pipeline
-          </Button>
+          <BackButton label="← Back to Deals" href="/deals" />
 
           <div className="flex items-start justify-between">
             <div>

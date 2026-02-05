@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye } from "lucide-react";
 import { useLocation } from "wouter";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function Deals() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,8 +34,21 @@ export default function Deals() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-background">
+        <header className="border-b border-border bg-card">
+          <div className="container py-8">
+            <Breadcrumbs
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Deal Pipeline", href: "/deals" },
+              ]}
+            />
+            <h1 className="text-4xl font-bold text-foreground mb-2">Deal Pipeline</h1>
+          </div>
+        </header>
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
       </div>
     );
   }
@@ -44,6 +58,12 @@ export default function Deals() {
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container py-8">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Deal Pipeline", href: "/deals" },
+            ]}
+          />
           <h1 className="text-4xl font-bold text-foreground mb-2">Deal Pipeline</h1>
           <p className="text-muted-foreground">
             Browse active deals with AI-powered buyer recommendations

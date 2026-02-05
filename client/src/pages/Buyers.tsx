@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Loader2, Search } from "lucide-react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function Buyers() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,6 +57,12 @@ export default function Buyers() {
       {/* Header */}
       <div className="bg-white border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Buyer Directory", href: "/directory" },
+            ]}
+          />
           <h1 className="text-4xl font-bold text-foreground mb-2">Buyer Directory</h1>
           <p className="text-muted-foreground">
             Discover builders, developers, and investors actively acquiring properties

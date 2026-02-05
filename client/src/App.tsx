@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import AppLayout from "./components/AppLayout";
 import Home from "./pages/Home";
 import Buyers from "./pages/Buyers";
 import Deals from "./pages/Deals";
@@ -12,16 +13,18 @@ import DealDetail from "./pages/DealDetail";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/directory" component={Buyers} />
-      <Route path="/buyers" component={Buyers} />
-      <Route path="/deals" component={Deals} />
-      <Route path="/deals/:id" component={DealDetail} />
-      <Route path="/404" component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <AppLayout>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/directory" component={Buyers} />
+        <Route path="/buyers" component={Buyers} />
+        <Route path="/deals" component={Deals} />
+        <Route path="/deals/:id" component={DealDetail} />
+        <Route path="/404" component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
+      </Switch>
+    </AppLayout>
   );
 }
 

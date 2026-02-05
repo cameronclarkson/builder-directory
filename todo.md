@@ -160,3 +160,18 @@
 - [ ] Add edit functionality for deal details
 - [x] Test deal detail view
 - [x] Create checkpoint with deal detail view
+
+
+## Phase 13 - SaaS Navigation & Usability Improvements
+- [x] Implement persistent sidebar navigation with collapsible drawer on mobile
+- [x] Add top navigation bar with app branding and user actions
+- [x] Create navigation component that works across all pages (Home, Buyers, Deals, DealDetail)
+- [x] Add breadcrumbs to Deals and DealDetail pages for wayfinding
+- [x] Add back button to DealDetail page
+- [ ] Improve mobile responsiveness with Tailwind breakpoints (sm, md, lg, xl)
+- [ ] Add keyboard navigation support (Tab, Escape, Enter)
+- [ ] Add ARIA labels and semantic HTML for accessibility
+- [ ] Ensure all touch targets are 44px minimum
+- [ ] Test navigation on mobile, tablet, and desktop devices
+- [ ] Verify color contrast meets WCAG AA standards
+- [ ] Create checkpoint with improved navigation
