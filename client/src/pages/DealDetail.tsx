@@ -59,7 +59,7 @@ export default function DealDetail() {
     const subject = `Investment Opportunity: ${deal.title}`;
     const body = `Hi ${buyerName},
 
-I wanted to share an investment opportunity that matches your acquisition criteria:
+I wanted to share an investment opportunity with you:
 
 Property: ${deal.title}
 Location: ${deal.location || "N/A"}

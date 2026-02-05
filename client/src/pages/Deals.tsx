@@ -218,15 +218,13 @@ export default function Deals() {
                                       const subject = encodeURIComponent(`${deal.title} - Investment Opportunity`);
                                       const body = encodeURIComponent(
                                         `Hi ${contact.name},\n\n` +
-                                        `I wanted to share an investment opportunity that matches your acquisition criteria:\n\n` +
+                                        `I wanted to share an investment opportunity with you:\n\n` +
                                         `Property: ${deal.title}\n` +
                                         `Location: ${deal.location || 'N/A'}\n` +
                                         `Acreage: ${deal.acreage || 'N/A'}\n` +
                                         `Zoning: ${deal.zoning || 'N/A'}\n` +
-                                        `Value: $${deal.value ? parseInt(deal.value).toLocaleString() : 'N/A'}\n` +
-                                        `Stage: ${deal.stage || 'N/A'}\n\n` +
+                                        `Value: $${deal.value ? parseInt(deal.value).toLocaleString() : 'N/A'}\n\n` +
                                         `${deal.description || ''}\n\n` +
-                                        `This property scored ${score}/100 against your buy box criteria. ` +
                                         `I'd love to discuss this opportunity with you.\n\n` +
                                         `Best regards,\n` +
                                         `Cameron Clarkson\n` +

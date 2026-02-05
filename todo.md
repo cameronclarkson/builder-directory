@@ -190,3 +190,11 @@
 - [x] Make "Send to Buyer" button full-width or stack vertically on mobile
 - [x] Ensure all card content fits within viewport on mobile
 - [x] Test card layout on various mobile screen sizes
+
+
+## Phase 16 - Remove Internal Details from Buyer Outreach Emails
+- [x] Remove deal stage from email template
+- [x] Remove match criteria breakdown from email template
+- [x] Remove match score reference from email template
+- [x] Keep only essential property details (title, location, acreage, zoning, value)
+- [x] Test email generation to verify no internal details are exposed
