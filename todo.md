@@ -138,3 +138,12 @@
 - [x] Create deal-buyer match report
 - [x] Test improved matching algorithm
 - [x] Create checkpoint with enriched deals and improved matching
+
+
+## Phase 11 - Filter Business Deals from Builder Matches
+- [x] Identify business deals in database (vs land/real estate deals)
+- [x] Update matching algorithm to exclude business deals for builders
+- [x] Only show business deals to investors and developers
+- [x] Add deal_type field logic to scoreDealContactMatch
+- [x] Test that builders only see real estate deals
+- [x] Create checkpoint with deal type filtering

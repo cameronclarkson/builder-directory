@@ -297,8 +297,40 @@ function calculateBuyerTypeScore(
   return 0;
 }
 
+// Check if a deal is a business acquisition (not real estate)
+function isBusinessDeal(deal: Deal): boolean {
+  const title = (deal.title || "").toLowerCase();
+  const description = (deal.description || "").toLowerCase();
+  
+  // Business acquisition keywords
+  const businessKeywords = [
+    "demolition", "contractor", "business acquisition", "company acquisition",
+    "operations center", "corporate", "fortune 500", "ttm earnings",
+    "cash-on-cash return", "profitable business"
+  ];
+  
+  return businessKeywords.some(keyword => 
+    title.includes(keyword) || description.includes(keyword)
+  );
+}
+
 // Score a single deal-contact pair
 export function scoreDealContactMatch(deal: Deal, contact: Contact): MatchedContact {
+  // Builders should not see business deals
+  if (contact.buyer_type === "Builder" && isBusinessDeal(deal)) {
+    return {
+      contact,
+      score: 0,
+      matchBreakdown: {
+        geographic: 0,
+        acreage: 0,
+        lotCount: 0,
+        zoning: 0,
+        buyerType: 0,
+      },
+    };
+  }
+  
   const geographic = calculateGeographicScore(deal.location, contact.market);
   const acreage = calculateAcreageScore(deal.acreage, deal.description, contact.buy_box);
   const lotCount = calculateLotCountScore(deal.description, contact.buy_box);
