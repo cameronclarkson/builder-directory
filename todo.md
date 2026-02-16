@@ -219,3 +219,10 @@
 - [x] Display research results in modal or side panel
 - [ ] Allow user to add discovered buyers to database
 - [ ] Track research history per deal
+
+## Phase 20 - Import Buyer Interest Data
+- [x] Parse buyer interest data from CSV format
+- [x] Map interest status to database fields (Interested, Warm, Not a Fit, etc.)
+- [x] Extract acquisition criteria from Key Details column
+- [x] Update Supabase contacts table with new buyers (11 buyers added)
+- [x] Verify data was inserted successfully
