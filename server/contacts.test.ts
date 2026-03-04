@@ -16,7 +16,7 @@ vi.mock("./supabase", () => ({
       status: "Lead",
       focus: null,
       target_markets: null,
-      market: "Georgia",
+      market: "Southeast - Georgia",
       buy_box: "Test buy box",
       notes: "Test notes",
       buyer_type: "Builder",
@@ -39,7 +39,7 @@ vi.mock("./supabase", () => ({
         status: "Lead",
         focus: null,
         target_markets: null,
-        market: "Georgia",
+        market: "Southeast - Georgia",
         buy_box: "Test buy box",
         notes: "Test notes",
         buyer_type: "Builder",
@@ -57,7 +57,7 @@ vi.mock("./supabase", () => ({
       return matchesQuery && matchesMarket && matchesBuyerType;
     });
   }),
-  getUniqueMarkets: vi.fn(async () => ["Georgia", "Texas", "Florida"]),
+  getUniqueMarkets: vi.fn(async () => ["Southeast - Georgia", "Southwest - Texas", "Southeast - Florida"]),
   getUniqueBuyerTypes: vi.fn(async () => ["Builder", "Developer", "Investor"]),
 }));
 
@@ -101,7 +101,7 @@ describe("contacts router", () => {
     const caller = appRouter.createCaller(ctx);
 
     const result = await caller.contacts.search({
-      market: "Georgia",
+      market: "Southeast - Georgia",
     });
 
     expect(result).toHaveLength(1);
@@ -124,7 +124,7 @@ describe("contacts router", () => {
 
     const result = await caller.contacts.getFilters();
 
-    expect(result.markets).toContain("Georgia");
+    expect(result.markets).toContain("Southeast - Georgia");
     expect(result.buyerTypes).toContain("Builder");
   });
 });

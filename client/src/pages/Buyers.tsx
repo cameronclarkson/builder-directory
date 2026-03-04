@@ -3,20 +3,19 @@ import { trpc } from "@/lib/trpc";
 import BuyerCard from "@/components/BuyerCard";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, ChevronDown } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function Buyers() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMarket, setSelectedMarket] = useState<string>("all");
-  const [selectedBuyerType, setSelectedBuyerType] = useState<string>("all");
+  const [selectedMarkets, setSelectedMarkets] = useState<string[]>([]);
+  const [selectedBuyerTypes, setSelectedBuyerTypes] = useState<string[]>([]);
 
   // Fetch all contacts
   const { data: buyers, isLoading: buyersLoading } = trpc.contacts.list.useQuery();
@@ -28,34 +27,34 @@ export default function Buyers() {
   const { data: searchResults, isLoading: searchLoading } = trpc.contacts.search.useQuery(
     {
       query: searchQuery,
-      market: selectedMarket,
-      buyerType: selectedBuyerType,
+      market: selectedMarkets,
+      buyerType: selectedBuyerTypes,
     },
     {
-      enabled: searchQuery.length > 0 || selectedMarket !== "all" || selectedBuyerType !== "all",
+      enabled: searchQuery.length > 0 || selectedMarkets.length > 0 || selectedBuyerTypes.length > 0,
     }
   );
 
   // Determine which data to display
   const displayedBuyers = useMemo(() => {
-    if (searchQuery.length > 0 || selectedMarket !== "all" || selectedBuyerType !== "all") {
+    if (searchQuery.length > 0 || selectedMarkets.length > 0 || selectedBuyerTypes.length > 0) {
       return searchResults || [];
     }
     return buyers || [];
-  }, [buyers, searchResults, searchQuery, selectedMarket, selectedBuyerType]);
+  }, [buyers, searchResults, searchQuery, selectedMarkets, selectedBuyerTypes]);
 
   const isLoading = buyersLoading || searchLoading;
 
   const handleClearFilters = () => {
     setSearchQuery("");
-    setSelectedMarket("all");
-    setSelectedBuyerType("all");
+    setSelectedMarkets([]);
+    setSelectedBuyerTypes([]);
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-border">
+      <div className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Breadcrumbs
             items={[
@@ -71,7 +70,7 @@ export default function Buyers() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-border sticky top-0 z-10">
+      <div className="bg-card border-b border-border sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search Input */}
@@ -86,40 +85,92 @@ export default function Buyers() {
             </div>
 
             {/* Buyer Type Filter */}
-            <Select value={selectedBuyerType} onValueChange={setSelectedBuyerType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by buyer type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between font-normal">
+                  <span className="truncate">
+                    {selectedBuyerTypes.length === 0
+                      ? "Filter by buyer type"
+                      : selectedBuyerTypes.length === 1
+                      ? selectedBuyerTypes[0]
+                      : `${selectedBuyerTypes.length} types selected`}
+                  </span>
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuCheckboxItem
+                  checked={selectedBuyerTypes.length === 0}
+                  onCheckedChange={(checked) => {
+                    if (checked) setSelectedBuyerTypes([]);
+                  }}
+                >
+                  All Types
+                </DropdownMenuCheckboxItem>
                 {filters?.buyerTypes?.map((type) => (
-                  <SelectItem key={type} value={type}>
+                  <DropdownMenuCheckboxItem
+                    key={type}
+                    checked={selectedBuyerTypes.includes(type)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedBuyerTypes([...selectedBuyerTypes, type]);
+                      } else {
+                        setSelectedBuyerTypes(selectedBuyerTypes.filter((t) => t !== type));
+                      }
+                    }}
+                  >
                     {type}
-                  </SelectItem>
+                  </DropdownMenuCheckboxItem>
                 ))}
-              </SelectContent>
-            </Select>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Market Filter */}
-            <Select value={selectedMarket} onValueChange={setSelectedMarket}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by market" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Markets</SelectItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between font-normal">
+                  <span className="truncate">
+                    {selectedMarkets.length === 0
+                      ? "Filter by market"
+                      : selectedMarkets.length === 1
+                      ? selectedMarkets[0]
+                      : `${selectedMarkets.length} markets selected`}
+                  </span>
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuCheckboxItem
+                  checked={selectedMarkets.length === 0}
+                  onCheckedChange={(checked) => {
+                    if (checked) setSelectedMarkets([]);
+                  }}
+                >
+                  All Markets
+                </DropdownMenuCheckboxItem>
                 {filters?.markets?.map((market) => (
-                  <SelectItem key={market} value={market}>
+                  <DropdownMenuCheckboxItem
+                    key={market}
+                    checked={selectedMarkets.includes(market)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedMarkets([...selectedMarkets, market]);
+                      } else {
+                        setSelectedMarkets(selectedMarkets.filter((m) => m !== market));
+                      }
+                    }}
+                  >
                     {market}
-                  </SelectItem>
+                  </DropdownMenuCheckboxItem>
                 ))}
-              </SelectContent>
-            </Select>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Clear Filters Button */}
             <Button
               variant="outline"
               onClick={handleClearFilters}
-              disabled={searchQuery === "" && selectedMarket === "all" && selectedBuyerType === "all"}
+              disabled={searchQuery === "" && selectedMarkets.length === 0 && selectedBuyerTypes.length === 0}
             >
               Clear Filters
             </Button>

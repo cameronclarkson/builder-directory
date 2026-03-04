@@ -38,7 +38,7 @@ describe("Business Deal Filtering", () => {
     email: "builder@example.com",
     phone: null,
     website: null,
-    market: "Georgia",
+    market: "Southeast - Georgia",
     business: null,
     status: "Lead",
     focus: "Builder",

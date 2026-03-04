@@ -21,7 +21,7 @@ export default function BackButton({ label = "Back", href }: BackButtonProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="mb-4 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            className="mb-4 text-muted-foreground hover:text-foreground hover:bg-muted"
             aria-label={label}
           >
             <ChevronLeft size={18} className="mr-1" />
@@ -37,7 +37,7 @@ export default function BackButton({ label = "Back", href }: BackButtonProps) {
       variant="ghost"
       size="sm"
       onClick={handleClick}
-      className="mb-4 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+      className="mb-4 text-muted-foreground hover:text-foreground hover:bg-muted"
       aria-label={label}
     >
       <ChevronLeft size={18} className="mr-1" />

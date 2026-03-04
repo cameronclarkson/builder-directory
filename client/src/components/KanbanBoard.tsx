@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, MapPin, TrendingUp, Sparkles } from "lucide-react";
+import { DollarSign, MapPin, TrendingUp, Sparkles, Edit } from "lucide-react";
 import { Link } from "wouter";
 
 export type DealStage = "Lead" | "Qualified" | "Under Contract" | "Closed" | "Dead";
 
 export interface KanbanDeal {
-  id: number;
+  id: number | string;
   title: string;
   location?: string;
   value?: string;
@@ -20,30 +20,33 @@ export interface KanbanDeal {
 
 interface KanbanBoardProps {
   deals: KanbanDeal[];
-  onStageChange?: (dealId: number, newStage: DealStage) => void;
-  onFindBuyers?: (dealId: number) => void;
+  onStageChange?: (dealId: number | string, newStage: DealStage) => void;
+  onFindBuyers?: (dealId: number | string) => void;
+  onEditDeal?: (dealId: number | string) => void;
 }
 
 const STAGES: DealStage[] = ["Lead", "Qualified", "Under Contract", "Closed", "Dead"];
 
 const STAGE_COLORS: Record<DealStage, string> = {
-  Lead: "bg-gray-100 border-gray-300",
-  Qualified: "bg-blue-50 border-blue-300",
-  "Under Contract": "bg-yellow-50 border-yellow-300",
-  Closed: "bg-green-50 border-green-300",
-  Dead: "bg-red-50 border-red-300",
+  Lead: "bg-muted/50 border-border",
+  Qualified: "bg-primary/5 border-primary/30",
+  "Under Contract": "bg-amber-500/10 dark:bg-amber-400/10 border-amber-500/30 dark:border-amber-400/30",
+  Closed: "bg-emerald-500/10 dark:bg-emerald-400/10 border-emerald-500/30 dark:border-emerald-400/30",
+  Dead: "bg-destructive/10 border-destructive/30",
 };
 
-export default function KanbanBoard({ deals, onStageChange, onFindBuyers }: KanbanBoardProps) {
-  const [draggedDeal, setDraggedDeal] = useState<number | null>(null);
+export default function KanbanBoard({ deals, onStageChange, onFindBuyers, onEditDeal }: KanbanBoardProps) {
+  const [draggedDeal, setDraggedDeal] = useState<number | string | null>(null);
 
   const dealsByStage = STAGES.reduce((acc, stage) => {
     acc[stage] = deals.filter((d) => d.stage === stage);
     return acc;
   }, {} as Record<DealStage, KanbanDeal[]>);
 
-  const handleDragStart = (dealId: number) => {
+  const handleDragStart = (e: React.DragEvent, dealId: number | string) => {
     setDraggedDeal(dealId);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", dealId.toString());
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -82,21 +85,35 @@ export default function KanbanBoard({ deals, onStageChange, onFindBuyers }: Kanb
                 <Card
                   key={deal.id}
                   draggable
-                  onDragStart={() => handleDragStart(deal.id)}
-                  className="cursor-move hover:shadow-lg transition-shadow bg-white"
+                  onDragStart={(e) => handleDragStart(e, deal.id)}
+                  className="cursor-move hover:shadow-lg transition-shadow"
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2">
                       <Link href={`/deals/${deal.id}`}>
-                        <a className="hover:underline">
+                        <a className="hover:underline flex-1">
                           <CardTitle className="text-base">{deal.title}</CardTitle>
                         </a>
                       </Link>
-                      {deal.deal_type && (
-                        <Badge variant="outline" className="text-xs flex-shrink-0">
-                          {deal.deal_type}
-                        </Badge>
-                      )}
+                      <div className="flex flex-col items-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onEditDeal?.(deal.id);
+                          }}
+                        >
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                        {deal.deal_type && (
+                          <Badge variant="outline" className="text-xs flex-shrink-0">
+                            {deal.deal_type}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2">

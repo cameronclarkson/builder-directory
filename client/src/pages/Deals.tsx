@@ -4,22 +4,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye, LayoutGrid, List } from "lucide-react";
+import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye, LayoutGrid, List, Edit } from "lucide-react";
 import { useLocation } from "wouter";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import KanbanBoard from "@/components/KanbanBoard";
 import MobileKanban from "@/components/MobileKanban";
 import BuyerResearchDialog from "@/components/BuyerResearchDialog";
+import EditDealDialog from "@/components/EditDealDialog";
 
 export default function Deals() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
   const [researchDialogOpen, setResearchDialogOpen] = useState(false);
-  const [selectedDealForResearch, setSelectedDealForResearch] = useState<{ id: number; title: string } | null>(null);
+  const [selectedDealForResearch, setSelectedDealForResearch] = useState<{ id: number | string; title: string } | null>(null);
+  const [editingDeal, setEditingDeal] = useState<any>(null);
   const [, setLocation] = useLocation();
+  const utils = trpc.useUtils();
 
   // Fetch all deals with recommended buyers
   const { data: dealsWithMatches, isLoading } = trpc.deals.listWithMatches.useQuery();
+
+  const updateStageMutation = trpc.deals.updateStage.useMutation({
+    onSuccess: () => {
+      utils.deals.listWithMatches.invalidate();
+    },
+  });
 
   // Filter deals by search query
   const displayedDeals = useMemo(() => {
@@ -137,7 +146,7 @@ export default function Deals() {
             <div className="hidden md:block">
               <KanbanBoard
                 deals={displayedDeals.map((item) => ({
-                  id: parseInt(item.deal.id),
+                  id: item.deal.id,
                   title: item.deal.title,
                   location: item.deal.location || undefined,
                   value: item.deal.value || undefined,
@@ -148,13 +157,19 @@ export default function Deals() {
                 }))}
                 onStageChange={(dealId, newStage) => {
                   console.log(`Move deal ${dealId} to ${newStage}`);
-                  // TODO: Implement stage update mutation
+                  updateStageMutation.mutate({ dealId, stage: newStage });
                 }}
                 onFindBuyers={(dealId) => {
-                  const deal = displayedDeals.find((d) => parseInt(d.deal.id) === dealId);
+                  const deal = displayedDeals.find((d) => d.deal.id === String(dealId));
                   if (deal) {
-                    setSelectedDealForResearch({ id: dealId, title: deal.deal.title });
+                    setSelectedDealForResearch({ id: dealId as any, title: deal.deal.title });
                     setResearchDialogOpen(true);
+                  }
+                }}
+                onEditDeal={(dealId) => {
+                  const deal = displayedDeals.find((d) => d.deal.id === String(dealId));
+                  if (deal) {
+                    setEditingDeal(deal.deal);
                   }
                 }}
               />
@@ -164,7 +179,7 @@ export default function Deals() {
             <div className="md:hidden h-[calc(100vh-300px)]">
               <MobileKanban
                 deals={displayedDeals.map((item) => ({
-                  id: parseInt(item.deal.id),
+                  id: item.deal.id,
                   title: item.deal.title,
                   location: item.deal.location || undefined,
                   value: item.deal.value || undefined,
@@ -175,13 +190,19 @@ export default function Deals() {
                 }))}
                 onStageChange={(dealId, newStage) => {
                   console.log(`Move deal ${dealId} to ${newStage}`);
-                  // TODO: Implement stage update mutation
+                  updateStageMutation.mutate({ dealId, stage: newStage });
                 }}
                 onFindBuyers={(dealId) => {
-                  const deal = displayedDeals.find((d) => parseInt(d.deal.id) === dealId);
+                  const deal = displayedDeals.find((d) => d.deal.id === String(dealId));
                   if (deal) {
-                    setSelectedDealForResearch({ id: dealId, title: deal.deal.title });
+                    setSelectedDealForResearch({ id: dealId as any, title: deal.deal.title });
                     setResearchDialogOpen(true);
+                  }
+                }}
+                onEditDeal={(dealId) => {
+                  const deal = displayedDeals.find((d) => d.deal.id === String(dealId));
+                  if (deal) {
+                    setEditingDeal(deal.deal);
                   }
                 }}
               />
@@ -197,7 +218,19 @@ export default function Deals() {
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-2xl mb-2">{deal.title}</CardTitle>
+                        <CardTitle className="text-2xl mb-2 flex items-center justify-between">
+                          {deal.title}
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingDeal(deal);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </CardTitle>
                         <div className="flex flex-wrap gap-2 items-center text-sm text-muted-foreground">
                           {deal.location && (
                             <div className="flex items-center gap-1">
@@ -348,6 +381,15 @@ export default function Deals() {
           onOpenChange={setResearchDialogOpen}
           dealId={selectedDealForResearch.id}
           dealTitle={selectedDealForResearch.title}
+        />
+      )}
+
+      {/* Edit Deal Dialog */}
+      {editingDeal && (
+        <EditDealDialog
+          deal={editingDeal}
+          open={!!editingDeal}
+          onOpenChange={(open) => !open && setEditingDeal(null)}
         />
       )}
     </div>

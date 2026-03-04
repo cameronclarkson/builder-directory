@@ -27,7 +27,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
             <span className="text-foreground font-medium">{item.label}</span>
           ) : (
             <Link href={item.href}>
-              <a className="text-blue-600 hover:text-blue-700 hover:underline transition-colors">
+              <a className="text-primary hover:text-primary/90 hover:underline transition-colors">
                 {item.label}
               </a>
             </Link>

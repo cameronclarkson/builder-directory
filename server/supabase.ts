@@ -1,7 +1,11 @@
+import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://erfvtaswzlawzegwnlww.supabase.co";
+const supabaseUrl =
+  process.env.SUPABASE_URL ?? "https://erfvtaswzlawzegwnlww.supabase.co";
 const supabaseKey =
+  process.env.SUPABASE_ANON_KEY ??
+  process.env.SUPABASE_SERVICE_ROLE_KEY ??
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZnZ0YXN3emxhd3plZ3dubHd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3NzkyMjUsImV4cCI6MjA4NTM1NTIyNX0.wFwN0QzRTJMROTVMIyduzlGuhBwnRQ_JUb414aJjkSo";
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
@@ -47,8 +51,8 @@ export async function getAllContacts(): Promise<Contact[]> {
 
 export async function searchContacts(
   query: string,
-  marketFilter?: string,
-  buyerTypeFilter?: string
+  marketFilter?: string | string[],
+  buyerTypeFilter?: string | string[]
 ): Promise<Contact[]> {
   let q = supabase.from("contacts").select("*");
 
@@ -60,13 +64,21 @@ export async function searchContacts(
   }
 
   // Filter by market
-  if (marketFilter && marketFilter !== "all") {
-    q = q.eq("market", marketFilter);
+  if (marketFilter) {
+    const markets = Array.isArray(marketFilter) ? marketFilter : [marketFilter];
+    const validMarkets = markets.filter(m => m !== "all");
+    if (validMarkets.length > 0) {
+      q = q.in("market", validMarkets);
+    }
   }
 
   // Filter by buyer type
-  if (buyerTypeFilter && buyerTypeFilter !== "all") {
-    q = q.eq("buyer_type", buyerTypeFilter);
+  if (buyerTypeFilter) {
+    const buyerTypes = Array.isArray(buyerTypeFilter) ? buyerTypeFilter : [buyerTypeFilter];
+    const validBuyerTypes = buyerTypes.filter(t => t !== "all");
+    if (validBuyerTypes.length > 0) {
+      q = q.in("buyer_type", validBuyerTypes);
+    }
   }
 
   const { data, error } = await q.order("company", { ascending: true });

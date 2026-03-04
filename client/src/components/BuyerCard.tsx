@@ -7,7 +7,7 @@ interface BuyerCardProps {
 
 export default function BuyerCard({ buyer }: BuyerCardProps) {
   return (
-    <div className="bg-white border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
       {/* Header */}
       <div className="mb-4">
         <div className="flex items-start justify-between mb-2">

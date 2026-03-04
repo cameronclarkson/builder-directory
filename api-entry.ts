@@ -1,9 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "../server/_core/oauth";
-import { appRouter } from "../server/routers";
-import { createContext } from "../server/_core/context";
+import { registerOAuthRoutes } from "./server/_core/oauth";
+import { appRouter } from "./server/routers";
+import { createContext } from "./server/_core/context";
 import path from "path";
 import fs from "fs";
 
@@ -37,5 +37,11 @@ if (fs.existsSync(distPath)) {
     res.status(503).json({ error: "Frontend build not found. Run pnpm build first." });
   });
 }
+
+// Prevent unhandled errors from crashing the serverless function
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[API] Unhandled error:", err);
+  res.status(500).json({ error: "Internal server error" });
+});
 
 export default app;

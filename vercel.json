@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "pnpm run build",
-  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run build:vercel",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": null,
   "functions": {
     "api/index.js": {
-      "runtime": "nodejs20.x",
       "maxDuration": 30
     }
   },

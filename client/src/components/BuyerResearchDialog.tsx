@@ -13,7 +13,7 @@ import { trpc } from "@/lib/trpc";
 interface BuyerResearchDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  dealId: number;
+  dealId: number | string;
   dealTitle: string;
 }
 

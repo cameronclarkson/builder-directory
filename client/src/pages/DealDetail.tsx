@@ -1,17 +1,20 @@
+import { useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Mail, MapPin, DollarSign, Home, Building2, Users } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, DollarSign, Home, Building2, Users, Edit } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import BackButton from "@/components/BackButton";
+import EditDealDialog from "@/components/EditDealDialog";
 
 export default function DealDetail() {
   const params = useParams();
   const [, setLocation] = useLocation();
   const dealId = params.id;
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const { data: dealWithMatches, isLoading } = trpc.deals.getById.useQuery(
     { dealId: dealId! },
@@ -103,7 +106,12 @@ Clarkson Capital`;
 
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-4xl font-bold mb-2">{deal.title}</h1>
+              <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+                {deal.title}
+                <Button variant="outline" size="icon" onClick={() => setIsEditDialogOpen(true)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </h1>
               {deal.location && (
                 <p className="text-muted-foreground flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
@@ -268,6 +276,14 @@ Clarkson Capital`;
           </div>
         </div>
       </div>
+      
+      {isEditDialogOpen && (
+        <EditDealDialog
+          deal={deal}
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+        />
+      )}
     </div>
   );
 }

@@ -33,14 +33,49 @@ export const appRouter = router({
         const { getDealById } = await import("./dealMatching");
         return getDealById(input.dealId);
       }),
+    update: publicProcedure
+      .input(
+        z.object({
+          id: z.string(),
+          title: z.string().optional(),
+          location: z.string().nullable().optional(),
+          description: z.string().nullable().optional(),
+          value: z.string().nullable().optional(),
+          acreage: z.string().nullable().optional(),
+          zoning: z.string().nullable().optional(),
+          deal_type: z.string().nullable().optional(),
+          stage: z.string().nullable().optional(),
+          status: z.string().nullable().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const { updateDeal } = await import("./dealMatching");
+        return updateDeal(id, updates);
+      }),
     getRecommendedBuyers: publicProcedure
       .input(z.object({ dealId: z.string() }))
       .query(async ({ input }) => {
         const { getRecommendedBuyers } = await import("./dealMatching");
         return getRecommendedBuyers(input.dealId);
       }),
+    semanticSearch: publicProcedure
+      .input(
+        z.object({
+          query: z.string().min(1),
+          limit: z.number().min(1).max(50).optional(),
+          threshold: z.number().min(0).max(1).optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        const { semanticSearchDeals } = await import("./embeddings");
+        return semanticSearchDeals(input.query, {
+          limit: input.limit,
+          threshold: input.threshold,
+        });
+      }),
     researchBuyers: publicProcedure
-      .input(z.object({ dealId: z.number(), mode: z.enum(["deep", "wide"]) }))
+      .input(z.object({ dealId: z.union([z.string(), z.number()]), mode: z.enum(["deep", "wide"]) }))
       .mutation(async ({ input }) => {
         // TODO: Implement AI buyer research
         // For now, return mock response
@@ -50,6 +85,13 @@ export const appRouter = router({
           buyersFound: input.mode === "deep" ? 5 : 15,
           mode: input.mode,
         };
+      }),
+    updateStage: publicProcedure
+      .input(z.object({ dealId: z.union([z.string(), z.number()]), stage: z.string() }))
+      .mutation(async ({ input }) => {
+        const { updateDealStage } = await import("./dealMatching");
+        const dealIdStr = input.dealId.toString();
+        return updateDealStage(dealIdStr, input.stage);
       }),
   }),
 
@@ -62,8 +104,8 @@ export const appRouter = router({
       .input(
         z.object({
           query: z.string().optional(),
-          market: z.string().optional(),
-          buyerType: z.string().optional(),
+          market: z.union([z.string(), z.array(z.string())]).optional(),
+          buyerType: z.union([z.string(), z.array(z.string())]).optional(),
         })
       )
       .query(async ({ input }) => {
@@ -78,6 +120,21 @@ export const appRouter = router({
       ]);
       return { markets, buyerTypes };
     }),
+    semanticSearch: publicProcedure
+      .input(
+        z.object({
+          query: z.string().min(1),
+          limit: z.number().min(1).max(50).optional(),
+          threshold: z.number().min(0).max(1).optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        const { semanticSearchContacts } = await import("./embeddings");
+        return semanticSearchContacts(input.query, {
+          limit: input.limit,
+          threshold: input.threshold,
+        });
+      }),
   }),
 
   interactions: router({

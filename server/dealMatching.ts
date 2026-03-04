@@ -486,3 +486,43 @@ export async function getAllDealsWithMatches(): Promise<DealWithMatches[]> {
     };
   });
 }
+
+// Update deal stage
+export async function updateDealStage(dealId: string, stage: string): Promise<boolean> {
+  const { error } = await supabase
+    .from("deals")
+    .update({ stage })
+    .eq("id", dealId);
+    
+  if (error) {
+    console.error("Error updating deal stage:", error);
+    return false;
+  }
+  
+  return true;
+}
+
+// Update deal
+export async function updateDeal(dealId: string, updates: Partial<Deal>): Promise<Deal> {
+  const { data, error } = await supabase
+    .from("deals")
+    .update(updates)
+    .eq("id", dealId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating deal:", error);
+    throw new Error(`Failed to update deal: ${error.message}`);
+  }
+
+  // Update embeddings in background if needed (ignoring for now or call updateDealEmbedding if available)
+  try {
+    const { updateDealEmbedding } = await import("./embeddings");
+    await updateDealEmbedding(data as Deal);
+  } catch (e) {
+    console.error("Failed to update deal embedding:", e);
+  }
+
+  return data as Deal;
+}

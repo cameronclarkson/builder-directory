@@ -2,27 +2,28 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, MapPin, TrendingUp, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { DollarSign, MapPin, TrendingUp, Sparkles, ChevronLeft, ChevronRight, Edit } from "lucide-react";
 import { Link } from "wouter";
 import { DealStage, KanbanDeal } from "./KanbanBoard";
 
 interface MobileKanbanProps {
   deals: KanbanDeal[];
-  onStageChange?: (dealId: number, newStage: DealStage) => void;
-  onFindBuyers?: (dealId: number) => void;
+  onStageChange?: (dealId: number | string, newStage: DealStage) => void;
+  onFindBuyers?: (dealId: number | string) => void;
+  onEditDeal?: (dealId: number | string) => void;
 }
 
 const STAGES: DealStage[] = ["Lead", "Qualified", "Under Contract", "Closed", "Dead"];
 
 const STAGE_COLORS: Record<DealStage, string> = {
-  Lead: "bg-gray-100",
-  Qualified: "bg-blue-50",
-  "Under Contract": "bg-yellow-50",
-  Closed: "bg-green-50",
-  Dead: "bg-red-50",
+  Lead: "bg-muted/50",
+  Qualified: "bg-primary/5",
+  "Under Contract": "bg-amber-500/10 dark:bg-amber-400/10",
+  Closed: "bg-emerald-500/10 dark:bg-emerald-400/10",
+  Dead: "bg-destructive/10",
 };
 
-export default function MobileKanban({ deals, onStageChange, onFindBuyers }: MobileKanbanProps) {
+export default function MobileKanban({ deals, onStageChange, onFindBuyers, onEditDeal }: MobileKanbanProps) {
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
   const currentStage = STAGES[currentStageIndex];
 
@@ -41,7 +42,7 @@ export default function MobileKanban({ deals, onStageChange, onFindBuyers }: Mob
     setCurrentStageIndex((prev) => Math.min(STAGES.length - 1, prev + 1));
   };
 
-  const handleSwipe = (dealId: number, direction: "left" | "right") => {
+  const handleSwipe = (dealId: number | string, direction: "left" | "right") => {
     if (!onStageChange) return;
 
     const newIndex = direction === "left" ? currentStageIndex + 1 : currentStageIndex - 1;
@@ -53,7 +54,7 @@ export default function MobileKanban({ deals, onStageChange, onFindBuyers }: Mob
   return (
     <div className="flex flex-col h-full">
       {/* Stage Navigation */}
-      <div className="flex items-center justify-between p-4 bg-white border-b sticky top-0 z-10">
+      <div className="flex items-center justify-between p-4 bg-card border-b border-border sticky top-0 z-10">
         <Button
           variant="ghost"
           size="sm"
@@ -81,13 +82,13 @@ export default function MobileKanban({ deals, onStageChange, onFindBuyers }: Mob
       </div>
 
       {/* Stage Indicator Dots */}
-      <div className="flex justify-center gap-2 py-3 bg-white border-b">
+      <div className="flex justify-center gap-2 py-3 bg-card border-b border-border">
         {STAGES.map((stage, index) => (
           <button
             key={stage}
             onClick={() => setCurrentStageIndex(index)}
             className={`h-2 rounded-full transition-all ${
-              index === currentStageIndex ? "w-8 bg-primary" : "w-2 bg-gray-300"
+              index === currentStageIndex ? "w-8 bg-primary" : "w-2 bg-muted-foreground/30"
             }`}
             aria-label={`Go to ${stage}`}
           />
@@ -103,7 +104,7 @@ export default function MobileKanban({ deals, onStageChange, onFindBuyers }: Mob
         ) : (
           <div className="space-y-3">
             {stageDeals.map((deal) => (
-              <Card key={deal.id} className="bg-white">
+              <Card key={deal.id}>
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <Link href={`/deals/${deal.id}`}>
@@ -111,11 +112,25 @@ export default function MobileKanban({ deals, onStageChange, onFindBuyers }: Mob
                         <CardTitle className="text-base">{deal.title}</CardTitle>
                       </a>
                     </Link>
-                    {deal.deal_type && (
-                      <Badge variant="outline" className="text-xs flex-shrink-0">
-                        {deal.deal_type}
-                      </Badge>
-                    )}
+                    <div className="flex flex-col items-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onEditDeal?.(deal.id);
+                        }}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      {deal.deal_type && (
+                        <Badge variant="outline" className="text-xs flex-shrink-0">
+                          {deal.deal_type}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2">

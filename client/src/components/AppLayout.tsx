@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Home, Users, TrendingUp } from "lucide-react";
+import { Menu, X, Home, Users, TrendingUp, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location] = useLocation();
+  const { theme, toggleTheme, switchable } = useTheme();
 
   const navItems = [
     { label: "Home", href: "/", icon: Home },
@@ -33,7 +35,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Sidebar - Desktop */}
       <aside
         className={`
-          hidden md:flex md:flex-col w-64 bg-white border-r border-border
+          hidden md:flex md:flex-col w-64 bg-card border-r border-border
           h-screen flex-shrink-0
         `}
         aria-label="Main navigation"
@@ -42,10 +44,10 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <div className="px-6 py-6 border-b border-border">
           <Link href="/">
             <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">BD</span>
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-sm">BD</span>
               </div>
-              <span className="font-bold text-lg text-gray-900">Builder Dir</span>
+              <span className="font-bold text-lg text-foreground">Builder Dir</span>
             </a>
           </Link>
         </div>
@@ -62,8 +64,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
                     flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
                     ${
                       active
-                        ? "bg-gray-100 text-gray-900 font-medium"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                     }
                   `}
                   aria-current={active ? "page" : undefined}
@@ -87,7 +89,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Mobile Sidebar */}
       <aside
         className={`
-          fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg z-30 md:hidden
+          fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-card shadow-lg z-30 md:hidden
           transform transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}
@@ -106,8 +108,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
                     flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
                     ${
                       active
-                        ? "bg-gray-100 text-gray-900 font-medium"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                     }
                   `}
                   aria-current={active ? "page" : undefined}
@@ -124,12 +126,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Main Content Container */}
       <div className="flex flex-col flex-1 w-full md:w-auto overflow-hidden">
         {/* Top Navigation Bar */}
-        <header className="bg-white border-b border-border sticky top-0 z-20 flex-shrink-0">
+        <header className="bg-card border-b border-border sticky top-0 z-20 flex-shrink-0">
           <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 w-full">
             {/* Hamburger Menu - Mobile */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+              className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors flex-shrink-0"
               aria-label={sidebarOpen ? "Close menu" : "Open menu"}
               aria-expanded={sidebarOpen}
             >
@@ -138,7 +140,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
             {/* Page Title - Mobile */}
             <div className="md:hidden flex-1 text-center px-2">
-              <h1 className="text-base sm:text-lg font-bold text-gray-900 truncate">Builder Directory</h1>
+              <h1 className="text-base sm:text-lg font-bold text-foreground truncate">Builder Directory</h1>
             </div>
 
             {/* Spacer for desktop */}
@@ -146,13 +148,21 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
             {/* Right side actions */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 text-sm"
-              >
-                Help
-              </Button>
+              {switchable && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleTheme}
+                  aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-5 w-5" />
+                  ) : (
+                    <Moon className="h-5 w-5" />
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </header>
