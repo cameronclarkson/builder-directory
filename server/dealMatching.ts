@@ -579,3 +579,18 @@ export async function updateDeal(dealId: string, updates: Partial<Deal>): Promis
 
   return data as Deal;
 }
+
+// Delete deal
+export async function deleteDeal(dealId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from("deals")
+    .delete()
+    .eq("id", dealId);
+    
+  if (error) {
+    console.error("Error deleting deal:", error);
+    throw new Error(`Failed to delete deal: ${error.message}`);
+  }
+  
+  return true;
+}

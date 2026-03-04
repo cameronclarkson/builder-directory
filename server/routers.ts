@@ -93,6 +93,13 @@ export const appRouter = router({
         const dealIdStr = input.dealId.toString();
         return updateDealStage(dealIdStr, input.stage);
       }),
+    delete: publicProcedure
+      .input(z.object({ dealId: z.union([z.string(), z.number()]) }))
+      .mutation(async ({ input }) => {
+        const { deleteDeal } = await import("./dealMatching");
+        const dealIdStr = input.dealId.toString();
+        return deleteDeal(dealIdStr);
+      }),
   }),
 
   contacts: router({

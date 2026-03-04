@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye, LayoutGrid, List, Edit } from "lucide-react";
+import { Loader2, Search, MapPin, DollarSign, TrendingUp, Eye, LayoutGrid, List, Edit, Trash2 } from "lucide-react";
 import { useLocation } from "wouter";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import KanbanBoard from "@/components/KanbanBoard";
@@ -25,6 +25,12 @@ export default function Deals() {
   const { data: dealsWithMatches, isLoading } = trpc.deals.listWithMatches.useQuery();
 
   const updateStageMutation = trpc.deals.updateStage.useMutation({
+    onSuccess: () => {
+      utils.deals.listWithMatches.invalidate();
+    },
+  });
+
+  const deleteDealMutation = trpc.deals.delete.useMutation({
     onSuccess: () => {
       utils.deals.listWithMatches.invalidate();
     },
@@ -172,6 +178,11 @@ export default function Deals() {
                     setEditingDeal(deal.deal);
                   }
                 }}
+                onDeleteDeal={(dealId) => {
+                  if (window.confirm("Are you sure you want to delete this deal?")) {
+                    deleteDealMutation.mutate({ dealId });
+                  }
+                }}
               />
             </div>
             
@@ -205,6 +216,11 @@ export default function Deals() {
                     setEditingDeal(deal.deal);
                   }
                 }}
+                onDeleteDeal={(dealId) => {
+                  if (window.confirm("Are you sure you want to delete this deal?")) {
+                    deleteDealMutation.mutate({ dealId });
+                  }
+                }}
               />
             </div>
           </>
@@ -220,16 +236,31 @@ export default function Deals() {
                       <div className="flex-1">
                         <CardTitle className="text-2xl mb-2 flex items-center justify-between">
                           {deal.title}
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingDeal(deal);
-                            }}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingDeal(deal);
+                              }}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="text-destructive hover:bg-destructive/10"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (window.confirm("Are you sure you want to delete this deal?")) {
+                                  deleteDealMutation.mutate({ dealId: deal.id });
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </CardTitle>
                         <div className="flex flex-wrap gap-2 items-center text-sm text-muted-foreground">
                           {deal.location && (

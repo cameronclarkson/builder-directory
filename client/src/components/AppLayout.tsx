@@ -45,9 +45,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
           <Link href="/">
             <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">BD</span>
+                <span className="text-primary-foreground font-bold text-sm">CC</span>
               </div>
-              <span className="font-bold text-lg text-foreground">Builder Dir</span>
+              <span className="font-bold text-lg text-foreground">Clarkson Capital</span>
             </a>
           </Link>
         </div>

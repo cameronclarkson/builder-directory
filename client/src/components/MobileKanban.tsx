@@ -2,8 +2,14 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, MapPin, TrendingUp, Sparkles, ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { DollarSign, MapPin, TrendingUp, Sparkles, ChevronLeft, ChevronRight, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import { Link } from "wouter";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { DealStage, KanbanDeal } from "./KanbanBoard";
 
 interface MobileKanbanProps {
@@ -11,19 +17,21 @@ interface MobileKanbanProps {
   onStageChange?: (dealId: number | string, newStage: DealStage) => void;
   onFindBuyers?: (dealId: number | string) => void;
   onEditDeal?: (dealId: number | string) => void;
+  onDeleteDeal?: (dealId: number | string) => void;
 }
 
-const STAGES: DealStage[] = ["Lead", "Qualified", "Under Contract", "Closed", "Dead"];
+const STAGES: DealStage[] = ["Lead", "Qualified", "In Negotiations", "Under Contract", "Closed", "Dead"];
 
 const STAGE_COLORS: Record<DealStage, string> = {
   Lead: "bg-muted/50",
   Qualified: "bg-primary/5",
+  "In Negotiations": "bg-blue-500/10 dark:bg-blue-400/10",
   "Under Contract": "bg-amber-500/10 dark:bg-amber-400/10",
   Closed: "bg-emerald-500/10 dark:bg-emerald-400/10",
   Dead: "bg-destructive/10",
 };
 
-export default function MobileKanban({ deals, onStageChange, onFindBuyers, onEditDeal }: MobileKanbanProps) {
+export default function MobileKanban({ deals, onStageChange, onFindBuyers, onEditDeal, onDeleteDeal }: MobileKanbanProps) {
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
   const currentStage = STAGES[currentStageIndex];
 
@@ -113,18 +121,44 @@ export default function MobileKanban({ deals, onStageChange, onFindBuyers, onEdi
                       </a>
                     </Link>
                     <div className="flex flex-col items-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          onEditDeal?.(deal.id);
-                        }}
-                      >
-                        <Edit className="h-3 w-3" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              onEditDeal?.(deal.id);
+                            }}
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              onDeleteDeal?.(deal.id);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       {deal.deal_type && (
                         <Badge variant="outline" className="text-xs flex-shrink-0">
                           {deal.deal_type}
