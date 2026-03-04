@@ -271,22 +271,75 @@ function calculateZoningScore(
 // Calculate buyer type bonus
 function calculateBuyerTypeScore(
   buyerType: string | null,
-  dealDescription: string | null
+  dealDescription: string | null,
+  contactBuyBox: string | null
 ): number {
   if (!buyerType || typeof buyerType !== 'string') return 0;
   
   const dealText = (typeof dealDescription === 'string' ? dealDescription : "").toLowerCase();
+  const buyBoxText = (typeof contactBuyBox === 'string' ? contactBuyBox : "").toLowerCase();
+  
+  // Strong indicators for Builder vs Developer pre-qualification
+  const builderKeywords = [
+    "finished lot", "entitled", "shovel ready", "permit", 
+    "engineered", "utilities at", "development ready", "ready to build",
+    "paper lot"
+  ];
+  
+  const developerKeywords = [
+    "raw land", "unentitled", "rezoning", "needs zoning", 
+    "concept plan", "future land use", "no utilities", "timber"
+  ];
   
   if (buyerType === "Builder") {
-    return 5; // Builders are primary buyers for residential land
+    let score = 5; // Base score
+    
+    const hasBuilderKeyword = builderKeywords.some(kw => dealText.includes(kw));
+    const hasDeveloperKeyword = developerKeywords.some(kw => dealText.includes(kw));
+    
+    // Check if the builder's buy box explicitly mentions developer keywords (hybrid)
+    const builderWantsRawLand = developerKeywords.some(kw => buyBoxText.includes(kw));
+    
+    // Strong bonus if deal matches builder requirements (ready to build)
+    if (hasBuilderKeyword) {
+      score += 15;
+    }
+    
+    // Heavy penalty for builders looking at raw/unentitled land, UNLESS they explicitly want it
+    if (hasDeveloperKeyword && !hasBuilderKeyword && !builderWantsRawLand) {
+      score -= 25; 
+    }
+    
+    // Penalty if deal is explicitly for builders but contact wants raw land
+    if (hasBuilderKeyword && builderWantsRawLand) {
+      score -= 10;
+    }
+    
+    return score;
   }
   
   if (buyerType === "Developer") {
-    // Prioritize developers for large-scale projects
-    if (dealText.includes("50") || dealText.includes("100") || dealText.includes("units")) {
-      return 5;
+    let score = 5; // Base score
+    
+    const hasDeveloperKeyword = developerKeywords.some(kw => dealText.includes(kw));
+    const hasBuilderKeyword = builderKeywords.some(kw => dealText.includes(kw));
+    
+    // Developers actively seek value-add opportunities (raw land, rezoning)
+    if (hasDeveloperKeyword) {
+      score += 15;
     }
-    return 3;
+    
+    // Prioritize developers for large-scale projects
+    if (dealText.match(/\b(50|100|\d{3,})\b/) || dealText.includes("units") || dealText.includes("acres")) {
+      score += 10;
+    }
+    
+    // Slight penalty if it's already a finished project and they are strictly a developer
+    if (hasBuilderKeyword && !hasDeveloperKeyword) {
+      score -= 10;
+    }
+    
+    return score;
   }
   
   if (buyerType === "Investor") {
@@ -335,7 +388,7 @@ export function scoreDealContactMatch(deal: Deal, contact: Contact): MatchedCont
   const acreage = calculateAcreageScore(deal.acreage, deal.description, contact.buy_box);
   const lotCount = calculateLotCountScore(deal.description, contact.buy_box);
   const zoning = calculateZoningScore(deal.zoning, deal.description, contact.buy_box);
-  const buyerType = calculateBuyerTypeScore(contact.buyer_type, deal.description);
+  const buyerType = calculateBuyerTypeScore(contact.buyer_type, deal.description, contact.buy_box);
   
   const score = geographic + acreage + lotCount + zoning + buyerType;
   
