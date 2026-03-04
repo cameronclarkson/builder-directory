@@ -6,6 +6,8 @@
 dist/
 build/
 *.dist
+# Allow compiled Vercel entry point
+!api/index.js
 
 # Environment variables
 .env
