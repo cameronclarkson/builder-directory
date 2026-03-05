@@ -75,7 +75,7 @@ export default function EditDealDialog({
       acreage: deal.acreage || "",
       zoning: deal.zoning || "",
       deal_type: deal.deal_type || "",
-      stage: deal.stage || "Lead",
+      stage: deal.stage || "Prospects",
     },
   });
 

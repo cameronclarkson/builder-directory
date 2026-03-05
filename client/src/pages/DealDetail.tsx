@@ -121,7 +121,7 @@ Clarkson Capital`;
             </div>
             <div className="flex gap-2">
               <Badge variant="outline">{deal.deal_type || "Real Estate"}</Badge>
-              <Badge>{deal.stage || "Lead"}</Badge>
+              <Badge>{deal.stage || "Prospects"}</Badge>
             </div>
           </div>
         </div>

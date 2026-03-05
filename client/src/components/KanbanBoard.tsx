@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export type DealStage = "Lead" | "Qualified" | "In Negotiations" | "Under Contract" | "Closed" | "Dead";
+export type DealStage = "Prospects" | "Lead" | "Qualified" | "In Negotiations" | "Under Contract" | "Closed" | "Dead";
 
 export interface KanbanDeal {
   id: number | string;
@@ -32,9 +32,10 @@ interface KanbanBoardProps {
   onDeleteDeal?: (dealId: number | string) => void;
 }
 
-const STAGES: DealStage[] = ["Lead", "Qualified", "In Negotiations", "Under Contract", "Closed", "Dead"];
+const STAGES: DealStage[] = ["Prospects", "Lead", "Qualified", "In Negotiations", "Under Contract", "Closed", "Dead"];
 
 const STAGE_COLORS: Record<DealStage, string> = {
+  Prospects: "bg-slate-500/10 dark:bg-slate-400/10 border-slate-500/30 dark:border-slate-400/30",
   Lead: "bg-muted/50 border-border",
   Qualified: "bg-primary/5 border-primary/30",
   "In Negotiations": "bg-blue-500/10 dark:bg-blue-400/10 border-blue-500/30 dark:border-blue-400/30",

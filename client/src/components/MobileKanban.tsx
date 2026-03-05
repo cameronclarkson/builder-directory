@@ -20,9 +20,10 @@ interface MobileKanbanProps {
   onDeleteDeal?: (dealId: number | string) => void;
 }
 
-const STAGES: DealStage[] = ["Lead", "Qualified", "In Negotiations", "Under Contract", "Closed", "Dead"];
+const STAGES: DealStage[] = ["Prospects", "Lead", "Qualified", "In Negotiations", "Under Contract", "Closed", "Dead"];
 
 const STAGE_COLORS: Record<DealStage, string> = {
+  Prospects: "bg-slate-500/10 dark:bg-slate-400/10",
   Lead: "bg-muted/50",
   Qualified: "bg-primary/5",
   "In Negotiations": "bg-blue-500/10 dark:bg-blue-400/10",
