@@ -16,11 +16,12 @@
 
   <body>
     <div id="root"></div>
+    <!-- Remove script tags with unresolved env placeholders to avoid bad requests (e.g. old deployments) -->
+    <script>
+      (function(){var s=document.querySelectorAll('script[src]');for(var i=0;i<s.length;i++){if(s[i].src&&s[i].getAttribute('src').indexOf('VITE_')!==-1)s[i].remove();}})();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
-    <script
-      defer
-      src="%VITE_ANALYTICS_ENDPOINT%/umami"
-      data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+    <!-- Analytics script injected at build time by vite when VITE_ANALYTICS_* env vars are set -->
   </body>
 
 </html>

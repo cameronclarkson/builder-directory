@@ -126,3 +126,47 @@ export async function getUniqueBuyerTypes(): Promise<string[]> {
 
   return Array.from(new Set<string>(types || [])).sort();
 }
+
+export async function getContactById(id: string): Promise<Contact | null> {
+  const { data, error } = await supabase
+    .from("contacts")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    console.error("Error fetching contact:", error);
+    throw new Error(`Failed to fetch contact: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function updateContact(
+  id: string,
+  updates: Partial<Omit<Contact, "id" | "created_at">>
+): Promise<Contact> {
+  const { data, error } = await supabase
+    .from("contacts")
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating contact:", error);
+    throw new Error(`Failed to update contact: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function deleteContact(id: string): Promise<void> {
+  const { error } = await supabase.from("contacts").delete().eq("id", id);
+
+  if (error) {
+    console.error("Error deleting contact:", error);
+    throw new Error(`Failed to delete contact: ${error.message}`);
+  }
+}

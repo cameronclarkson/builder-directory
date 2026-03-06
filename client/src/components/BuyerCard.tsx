@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 import { BuyerProfile } from "@/types/buyer";
 import { Mail, MapPin, Building2 } from "lucide-react";
 
@@ -6,8 +7,14 @@ interface BuyerCardProps {
 }
 
 export default function BuyerCard({ buyer }: BuyerCardProps) {
+  const [, setLocation] = useLocation();
+
   return (
-    <div className="bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
+    <button
+      type="button"
+      onClick={() => setLocation(`/directory/${buyer.id}`)}
+      className="w-full text-left bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-shadow hover:border-primary/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
       {/* Header */}
       <div className="mb-4">
         <div className="flex items-start justify-between mb-2">
@@ -29,6 +36,7 @@ export default function BuyerCard({ buyer }: BuyerCardProps) {
         {buyer.email && (
           <a
             href={`mailto:${buyer.email}`}
+            onClick={(e) => e.stopPropagation()}
             className="text-sm text-primary hover:underline flex items-center gap-2"
           >
             <Mail className="w-4 h-4" />
@@ -66,6 +74,6 @@ export default function BuyerCard({ buyer }: BuyerCardProps) {
           </p>
         </div>
       )}
-    </div>
+    </button>
   );
 }

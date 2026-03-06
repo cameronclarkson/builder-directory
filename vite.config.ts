@@ -150,7 +150,35 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+/**
+ * Injects Umami analytics script at build time only when env vars are set.
+ * Avoids shipping a broken script with %VITE_*% placeholders when vars are missing (e.g. on Vercel).
+ */
+function vitePluginAnalytics(): Plugin {
+  return {
+    name: "analytics-inject",
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        if (process.env.NODE_ENV !== "production") return html;
+        const endpoint = process.env.VITE_ANALYTICS_ENDPOINT;
+        const websiteId = process.env.VITE_ANALYTICS_WEBSITE_ID;
+        if (!endpoint || !websiteId) return html;
+        const script = `<script defer src="${endpoint}/umami" data-website-id="${websiteId}"></script>`;
+        return html.replace("<!-- Analytics script injected at build time", script + "\n    <!-- Analytics script injected at build time");
+      },
+    },
+  };
+}
+
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  vitePluginManusRuntime(),
+  vitePluginManusDebugCollector(),
+  vitePluginAnalytics(),
+];
 
 export default defineConfig({
   plugins,

@@ -107,6 +107,39 @@ export const appRouter = router({
       const { getAllContacts } = await import("./supabase");
       return getAllContacts();
     }),
+    getById: publicProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ input }) => {
+        const { getContactById } = await import("./supabase");
+        return getContactById(input.id);
+      }),
+    update: publicProcedure
+      .input(
+        z.object({
+          id: z.string(),
+          name: z.string().optional(),
+          email: z.string().nullable().optional(),
+          company: z.string().nullable().optional(),
+          phone: z.string().nullable().optional(),
+          website: z.string().nullable().optional(),
+          market: z.string().nullable().optional(),
+          buy_box: z.string().nullable().optional(),
+          notes: z.string().nullable().optional(),
+          buyer_type: z.string().nullable().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const { updateContact } = await import("./supabase");
+        return updateContact(id, updates);
+      }),
+    delete: publicProcedure
+      .input(z.object({ id: z.string() }))
+      .mutation(async ({ input }) => {
+        const { deleteContact } = await import("./supabase");
+        await deleteContact(input.id);
+        return { success: true };
+      }),
     search: publicProcedure
       .input(
         z.object({

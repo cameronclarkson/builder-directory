@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Buyers from "./pages/Buyers";
 import Deals from "./pages/Deals";
 import DealDetail from "./pages/DealDetail";
+import BuyerDetail from "./pages/BuyerDetail";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -17,7 +18,9 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/directory" component={Buyers} />
+        <Route path="/directory/:id" component={BuyerDetail} />
         <Route path="/buyers" component={Buyers} />
+        <Route path="/buyers/:id" component={BuyerDetail} />
         <Route path="/deals" component={Deals} />
         <Route path="/deals/:id" component={DealDetail} />
         <Route path="/404" component={NotFound} />
